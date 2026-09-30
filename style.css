@@ -1,0 +1,76 @@
+:root {
+  --bg: #f6f7f9; --card: #fff; --ink: #1c1f23; --mute: #667085; --line: #e3e6ea; --accent: #1f5f8b; --chip: #eef3f8;
+  --moving: #2e7d4f;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #111418; --card: #1b2026; --ink: #e8eaed; --mute: #9aa3ad; --line: #2c333b; --accent: #7fb6e0; --chip: #232a32; --moving: #6cc795; }
+  /* the drawings are black on white, as printed: kept on a white card */
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+a { color: var(--accent); }
+header#top { position: sticky; top: 0; z-index: 5; display: flex; gap: 8px; align-items: center; padding: 10px 12px;
+  padding-top: max(10px, env(safe-area-inset-top)); background: var(--card); border-bottom: 1px solid var(--line); }
+.brand { font-weight: 700; text-decoration: none; color: var(--ink); }
+#q { flex: 1; min-width: 0; font-size: 16px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); }
+.about { width: 32px; height: 32px; border-radius: 16px; display: grid; place-items: center; text-decoration: none; border: 1px solid var(--line); color: var(--mute); }
+main { max-width: 760px; margin: 0 auto; padding: 12px 12px calc(40px + env(safe-area-inset-bottom)); }
+.loading { color: var(--mute); }
+
+.filters { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 12px; }
+.chip { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 999px; padding: 5px 11px; font-size: 14px; }
+.chip.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+details.chap { background: var(--card); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; overflow: hidden; }
+details.chap > summary { list-style: none; padding: 12px 14px; font-weight: 600; display: flex; justify-content: space-between; gap: 8px; cursor: pointer; }
+details.chap > summary::-webkit-details-marker { display: none; }
+details.chap > summary .n { color: var(--mute); font-weight: 400; font-size: 14px; }
+ul.pats { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+ul.pats li a { display: flex; align-items: baseline; gap: 8px; padding: 10px 14px; text-decoration: none; color: var(--ink); border-bottom: 1px solid var(--line); }
+ul.pats li:last-child a { border-bottom: 0; }
+ul.pats .nm { flex: 1; }
+ul.pats .meta { color: var(--mute); font-size: 13px; white-space: nowrap; }
+.badge { font-size: 11px; padding: 1px 6px; border-radius: 6px; background: var(--chip); color: var(--mute); white-space: nowrap; }
+.badge.mv { background: var(--moving); color: #fff; }
+.results { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+
+.pat h1 { font-size: 22px; margin: 4px 0 2px; }
+.pat .sub { color: var(--mute); font-size: 14px; margin-bottom: 10px; }
+.links { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 14px; }
+.btn { display: inline-block; padding: 8px 12px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); text-decoration: none; color: var(--ink); font-size: 14px; }
+.btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+.card h2 { font-size: 15px; margin: 0 0 8px; color: var(--mute); font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+.notes dt { color: var(--mute); font-size: 13px; }
+.notes dd { margin: 0 0 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 15px; word-break: break-all; }
+.paper { background: #fff; border-radius: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.paper svg { display: block; max-width: 100%; height: auto; }
+.paper.wide svg { max-width: none; width: 100%; min-width: 520px; }
+.drawbox { position: relative; width: 100%; }
+.drawbox > svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+.drawbox .kid { position: absolute; }
+.drawbox .kid svg { display: block; width: 100%; height: 100%; }
+.cap { color: var(--mute); font-size: 12px; margin-top: 6px; }
+.mv-stage { width: 100%; aspect-ratio: 1; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.mv-stage svg { width: 100%; height: 100%; display: block; }
+.mv-ctl { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+.mv-ctl .mv-slider { flex: 1; min-width: 0; }
+.mv-ctl button { font-size: 18px; width: 48px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+.mv-beat { font-variant-numeric: tabular-nums; font-size: 12px; color: var(--mute); min-width: 88px; }
+.mv-speed { font-size: 14px; }
+.tabs { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+.pager { display: flex; justify-content: space-between; gap: 8px; margin-top: 16px; }
+.pager a { flex: 1; text-align: center; }
+.about-page p { margin: 0 0 10px; }
+.empty { color: var(--mute); padding: 14px; }
+
+/* nothing wider than the screen: a wide causal diagram scrolls sideways inside its own box */
+html, body { overflow-x: hidden; }
+main, .card, .pat { min-width: 0; max-width: 100%; }
+.card { overflow: hidden; }
+.card svg { max-width: 100%; }
+.paper.wide { overflow-x: auto; }
+.paper.wide svg { max-width: none; }
+.mv-stage svg { max-width: 100%; }
+.pager a { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.links .btn, .card .btn { max-width: 100%; }
