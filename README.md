@@ -1,6 +1,6 @@
 # Highgate Passing Patterns (mobile reader)
 
-A phone-friendly edition of **The New Highgate Collection** of club passing patterns by Aidan Burns: the book's own
+A phone-, tablet- and desktop-friendly edition of **The New Highgate Collection** of club passing patterns by Aidan Burns: the book's own
 words, in its order, chapter by chapter, with its drawings. The site:
 - **Browsing:** by chapter, with search and filters (walking patterns, siteswaps, number of jugglers).
 - **Drawings:** each pattern's causal diagrams and position frames, redrawn, and each one switchable to the
@@ -19,6 +19,13 @@ terms: non-commercial, with attribution, share-alike.
 
 Site: https://algrant.github.io/highgate-mobile/
 
+## Screens
+
+One layout per width: a phone gets one column; from 900px the chapters sit beside the page and the book's page
+opens in a popover; from 1200px a panel (siteswap, links, walking animation) stays in view beside the words, and
+redrawn and original drawings show together. Keys: ← → previous / next pattern, / search, o redrawn or original,
+Esc closes the page.
+
 ## Layout
 
 - `index.html`, `style.css`, `app.js`: the site. No build step.
@@ -28,6 +35,7 @@ Site: https://algrant.github.io/highgate-mobile/
 - `lib/moving.js`: the walking-pattern player.
 - `data/index.json`: chapters and patterns, in book order.
 - `orig/`: the book's own drawings, cropped from the PDF.
+- `book/highgate.pdf`: a copy of the book (CC BY-NC-SA), which the page links open; the original is credited below.
 - `data/p/<id>.json`: one pattern: the book's text block by block, notations, what was derived from its drawings, its drawings (causal
   readings or redrawn SVG), and its moving models.
 

@@ -56,7 +56,7 @@ async function home() {
   } else {
     html += `<a class="bookcard" href="#/p/front"><b>${esc(INDEX.meta.title)}</b><span>by ${esc(INDEX.meta.author)} · the book's introduction and dedication →</span></a>`;
     html += INDEX.chapters.map((c, i) => `<details class="chap"${i === 0 ? "" : ""}><summary><span>${esc(c.title)}</span><span class="n">${c.patterns.length}</span></summary><ul class="pats">${c.patterns.map(row).join("")}</ul></details>`).join("");
-    html += `<p class="cap">Every pattern of ${esc(INDEX.meta.title)} by ${esc(INDEX.meta.author)}, in the book's words and order, with its drawings (redrawn, and the originals) and ${INDEX.meta.moving} walking patterns animated. <a href="${esc(INDEX.meta.pdf)}" target="_blank" rel="noopener">The original PDF ↗</a></p>`;
+    html += `<p class="cap">Every pattern of ${esc(INDEX.meta.title)} by ${esc(INDEX.meta.author)}, in the book's words and order, with its drawings (redrawn, and the originals) and ${INDEX.meta.moving} walking patterns animated. <a href="${esc(INDEX.meta.pdf)}" target="_blank" rel="noopener">The book's PDF ↗</a> (a copy of <a href="${esc(INDEX.meta.pdf_original || INDEX.meta.pdf)}" target="_blank" rel="noopener">the original</a>)</p>`;
   }
   $("#main").innerHTML = html;
   wireFilters(home);
@@ -88,7 +88,8 @@ function drawingHtml(d, i) {
   const orig = d.orig ? `<div class="paper orig"><img src="${esc(d.orig)}" alt="The book's drawing" loading="lazy"></div>` : "";
   const showOrig = !ours || ORIG;
   const tog = ours && orig ? `<div class="tog"><button class="chip${showOrig ? "" : " on"}" data-v="ours">Redrawn</button><button class="chip${showOrig ? " on" : ""}" data-v="orig">Original</button></div>` : "";
-  return `<figure class="draw${showOrig ? " show-orig" : ""}">${tog}<div class="v-ours">${ours}</div><div class="v-orig">${orig}</div><figcaption class="cap">${esc(d.kind === "drawing" ? "the book's drawing" : d.kind)} · ${esc(d.file)}${d.star ? ` · corrected<sup class="star">*</sup>` : ""}</figcaption></figure>`;
+  const both = ours && orig ? ` has-both ${d.kind === "causal diagram" ? "stack" : "pair"}` : "";
+  return `<figure class="draw${showOrig ? " show-orig" : ""}${both}">${tog}<div class="v-ours"><div class="vlab">Redrawn</div>${ours}</div><div class="v-orig"><div class="vlab">The book's drawing</div>${orig}</div><figcaption class="cap">${esc(d.kind === "drawing" ? "the book's drawing" : d.kind)} · ${esc(d.file)}${d.star ? ` · corrected<sup class="star">*</sup>` : ""}</figcaption></figure>`;
 }
 let ORIG = (() => { try { return localStorage.getItem("hg-orig") === "1"; } catch (e) { return false; } })();
 function wireToggles() {
@@ -118,7 +119,10 @@ function topSiteswap(p) {
   }
   else if (d && d.per_juggler) { lab = "per juggler"; val = Object.entries(d.per_juggler).map(([j, v]) => `${j}: ${v}`).join("  ·  "); how = "from the drawing"; }
   if (!val) return "";
-  return `<div class="topss"><span class="lab">${esc(lab)}</span> <code>${esc(val)}</code> <span class="how">${esc(how)}</span></div>`;
+  const parts = val.split("  ·  ");
+  return parts.length > 1
+    ? `<div class="topss"><span class="lab">${esc(lab)}</span> <span class="how">${esc(how)}</span><div class="parts">${parts.map(x => `<code>${esc(x)}</code>`).join("")}</div></div>`
+    : `<div class="topss"><span class="lab">${esc(lab)}</span> <code>${esc(val)}</code> <span class="how">${esc(how)}</span></div>`;
 }
 // the book's words, block by block, the drawings in place
 function bodyHtml(p) {
@@ -150,16 +154,25 @@ async function pattern(id) {
   const der = (p.derived && p.derived.value && !(p.notations || []).some(n => n.value === p.derived.value)
     ? `<dt>derived from the drawing (${esc(p.derived.kind || "")}${p.derived.confidence ? ", " + esc(p.derived.confidence) + " confidence" : ""})</dt><dd>${esc(p.derived.value)}</dd>` : "") + syncHtml;
   const src = `From <i>${esc(INDEX.meta.title)}</i> by ${esc(INDEX.meta.author)}${p.label ? `, page ${esc(p.label)}` : ""}`;
-  let html = `<div class="pat"><h1>${esc(p.name)}</h1><div class="sub">${esc(meta)}</div>
-    <div class="source">${src} · <a href="${esc(p.pdf || INDEX.meta.pdf)}" target="_blank" rel="noopener">view the original page ↗</a></div>
-    ${topSiteswap(p)}
+  let side = `${topSiteswap(p)}
     ${p.passist || p.passist_fork || notesOn() ? `<div class="links">${p.passist ? `<a class="btn" href="${esc(p.passist)}" target="_blank" rel="noopener">Animate on passist${p.passist.includes("//alpha.") ? " (beta)" : ""} ↗</a>` : ""}${p.passist_fork ? `<a class="btn" href="${esc(p.passist_fork.url)}" target="_blank" rel="noopener">${p.passist_fork.kind === "feed" ? "Feed" : p.passist_fork.kind === "sync" ? "Sync" : "Layers"} on pass.algrant.ca ↗</a>` : ""}${noteButtonHtml()}</div>${p.passist_fork && p.passist_fork.kind === "feed" && p.passist_fork.names[0] !== "A" ? `<div class="cap">On pass.algrant.ca the feeder is juggler A (here ${esc(({A: "Anne", B: "Ben", C: "Clare"})[p.passist_fork.names[0]] || p.passist_fork.names[0])}).</div>` : ""}` : ""}`;
-  if (models.length) html += `<div class="card"><h2>Walking (our model)</h2>${models.length > 1 ? `<div class="tabs">${models.map((x, i) => `<button class="chip${i === 0 ? " on" : ""}" data-m="${i}">${esc(x.lab)}</button>`).join("")}</div>` : ""}<div id="player"></div><div class="cap">Modelled from the book's position frames and causal diagram; tap ▶ to play.</div></div>`;
-  html += `<article class="text">${bodyHtml(p) || (p.drawings || []).map(drawingHtml).join("")}${(p.errata || []).length ? `<div class="errata"><h3>Corrections</h3>${p.errata.map(n => `<p><sup class="star">*</sup> ${esc(n)}</p>`).join("")}</div>` : ""}</article>`;
-  if (der && (sy || !(p.body || []).some(c => c.t === "l" && (c.h || "").includes(p.derived.value)))) html += `<div class="card"><h2>Derived from the drawing</h2><dl class="notes">${der}</dl></div>`;
-  if ((p.related || []).length) html += `<div class="card"><h2>Mentioned</h2>${p.related.map(r => `<a class="btn" href="#/p/${esc(r.id)}">${esc(r.name)}</a>`).join(" ")}</div>`;
-  html += `<div class="pager">${prev ? `<a class="btn" href="#/p/${esc(prev.id)}">← ${esc(prev.name)}</a>` : "<span></span>"}${next ? `<a class="btn" href="#/p/${esc(next.id)}">${esc(next.name)} →</a>` : "<span></span>"}</div></div>`;
-  $("#main").innerHTML = html;
+  if (models.length) side += `<div class="card"><h2>Walking (our model)</h2>${models.length > 1 ? `<div class="tabs">${models.map((x, i) => `<button class="chip${i === 0 ? " on" : ""}" data-m="${i}">${esc(x.lab)}</button>`).join("")}</div>` : ""}<div id="player"></div><div class="cap">Modelled from the book's position frames and causal diagram; tap ▶ to play.</div></div>`;
+  let main = `<article class="text">${bodyHtml(p) || (p.drawings || []).map(drawingHtml).join("")}${(p.errata || []).length ? `<div class="errata"><h3>Corrections</h3>${p.errata.map(n => `<p><sup class="star">*</sup> ${esc(n)}</p>`).join("")}</div>` : ""}</article>`;
+  // (what we derived: beside the words on a wide screen, after them on a phone)
+  const derCard = der && (sy || !(p.body || []).some(c => c.t === "l" && (c.h || "").includes(p.derived.value)))
+    ? `<dl class="notes">${der}</dl>` : "";
+  if (derCard) side += `<div class="card only-wide"><h2>Derived from the drawing</h2>${derCard}</div>`;
+  if (derCard) main += `<div class="card only-narrow"><h2>Derived from the drawing</h2>${derCard}</div>`;
+  if ((p.related || []).length) main += `<div class="card"><h2>Mentioned</h2>${p.related.map(r => `<a class="btn" href="#/p/${esc(r.id)}">${esc(r.name)}</a>`).join(" ")}</div>`;
+  main += `<div class="pager">${prev ? `<a class="btn" href="#/p/${esc(prev.id)}" id="prev">← ${esc(prev.name)}</a>` : "<span></span>"}${next ? `<a class="btn" href="#/p/${esc(next.id)}" id="next">${esc(next.name)} →</a>` : "<span></span>"}</div>`;
+  // (one column on a phone, the panel first; on a wide screen the panel -- siteswap, links, walking -- stays in view
+  // beside the book's words)
+  $("#main").innerHTML = `<div class="pat"><div class="pat-head"><h1>${esc(p.name)}</h1><div class="sub">${esc(meta)}</div>
+    <div class="source">${src} · <a href="${esc(p.pdf || INDEX.meta.pdf)}" target="_blank" rel="noopener" class="pdflink">view the original page ↗</a></div></div>
+    <div class="pat-cols"><div class="pat-side">${side}</div><div class="pat-main">${main}</div></div></div>`;
+  renderNav(id);
+  const pl = document.querySelector(".pdflink");
+  pl.onclick = e => { if (window.innerWidth >= 900) { e.preventDefault(); showPage(p.name, pl.href); } };
   window.scrollTo(0, 0);
   document.querySelectorAll(".drawbox").forEach(box => fitKids(box, p.drawings[+box.dataset.d]));
   wireToggles();
@@ -173,11 +186,60 @@ async function pattern(id) {
   }
 }
 
+// the chapters beside the page on a wide screen (hidden on a phone), the pattern being read marked
+let navBuilt = false;
+function renderNav(current) {
+  const nav = $("#nav");
+  if (!INDEX || !nav) return;
+  if (!navBuilt) {
+    nav.innerHTML = `<a class="navhome" href="#/">All chapters</a>` + INDEX.chapters.map(c => `<details class="navchap"><summary>${esc(c.title)}</summary><ul>${c.patterns.map(x => `<li><a href="#/p/${esc(x.id)}" data-id="${esc(x.id)}">${esc(x.name)}</a></li>`).join("")}</ul></details>`).join("");
+    navBuilt = true;
+  }
+  nav.querySelectorAll("a.on").forEach(a => a.classList.remove("on"));
+  const a = current && nav.querySelector(`a[data-id="${CSS.escape(current)}"]`);
+  if (a) {
+    a.classList.add("on");
+    a.closest("details").open = true;
+    const r = a.getBoundingClientRect(), n = nav.getBoundingClientRect();
+    if (r.top < n.top || r.bottom > n.bottom) a.scrollIntoView({block: "center"});
+  }
+}
+
+// the book's page in a popover on a wide screen (the PDF at the pattern's heading)
+function showPage(title, src) {
+  let pop = $("#pagepop");
+  if (!pop) {
+    document.body.insertAdjacentHTML("beforeend", `<div id="pagepop"><div class="bar"><span></span><a href="#" id="pageopen" target="_blank" rel="noopener">open in a new tab ↗</a><button id="pageclose" class="btn">close ✕</button></div><iframe title="The book's page"></iframe></div>`);
+    pop = $("#pagepop");
+    $("#pageclose").onclick = () => pop.classList.remove("open");
+  }
+  pop.querySelector(".bar span").textContent = `${title}: the book's page`;
+  $("#pageopen").href = src;
+  const fr = pop.querySelector("iframe");
+  if (fr.dataset.src !== src) { fr.src = src; fr.dataset.src = src; }
+  pop.classList.add("open");
+}
+
+// keys: ← → previous / next pattern, / search, o redrawn or the book's drawings, Esc closes the page
+document.addEventListener("keydown", e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const typing = /^(input|textarea|select)$/i.test((e.target.tagName || "")) || e.target.isContentEditable;
+  if (e.key === "Escape") { const pop = $("#pagepop"); if (pop) pop.classList.remove("open"); if (typing) e.target.blur(); return; }
+  if (typing) return;
+  if (e.key === "/") { e.preventDefault(); $("#q").focus(); }
+  else if (e.key === "ArrowLeft" && $("#prev")) location.hash = $("#prev").getAttribute("href");
+  else if (e.key === "ArrowRight" && $("#next")) location.hash = $("#next").getAttribute("href");
+  else if (e.key === "o") {
+    const b = document.querySelector(`figure.draw .tog .chip[data-v="${ORIG ? "ours" : "orig"}"]`);
+    if (b) b.click();
+  }
+});
+
 async function about() {
   await loadIndex();
   const m = INDEX.meta;
   $("#main").innerHTML = `<div class="card about-page"><h2>About</h2>
-    <p><b>${esc(m.title)}</b> was compiled by ${esc(m.author)}; this is a way to browse its patterns on a phone. The book: <a href="${esc(m.pdf)}" target="_blank" rel="noopener">PDF</a>, <a href="${esc(m.author_site)}" target="_blank" rel="noopener">the author's site</a>. Its cover carries a Creative Commons BY-NC-SA badge (${esc(m.licence)}).</p>
+    <p><b>${esc(m.title)}</b> was compiled by ${esc(m.author)}; this is a way to browse its patterns on a phone, a tablet or a computer. The book: <a href="${esc(m.pdf_original || m.pdf)}" target="_blank" rel="noopener">the original PDF</a> (this site keeps <a href="${esc(m.pdf)}" target="_blank" rel="noopener">a copy</a>, which its page links open, as the licence allows), <a href="${esc(m.author_site)}" target="_blank" rel="noopener">the author's site</a>. Its cover carries a Creative Commons BY-NC-SA badge (${esc(m.licence)}).</p>
     <p>This is a phone-friendly edition of the book: its words as written, in its order, chapter by chapter. Its drawings are redrawn from readings of the originals, and each can be switched to the book's own drawing; every page links to the same page of the original PDF. The walking animations are our models, built from the book's position frames and causal diagrams.</p>
     <p>Shared under the book's CC BY-NC-SA terms: non-commercial, with attribution.</p>
     <p>“Animate on passist” opens the pattern's siteswap on <a href="https://passist.org" target="_blank" rel="noopener">passist.org</a>, where one is known; patterns with no global siteswap open on its beta, <a href="https://alpha.passist.org" target="_blank" rel="noopener">alpha.passist.org</a>, as a symmetric siteswap (everyone throws the same sequence) or an extended one (each juggler's own sequence, passes to a numbered juggler). Only links that passist checks as valid are shown.</p>
@@ -192,7 +254,8 @@ async function route() {
     if (h.startsWith("/p/")) return await pattern(decodeURIComponent(h.slice(3)));
     if (h === "/about") return await about();
     if (h === "/notes") return await notesPage();
-    return await home();
+    await home();
+    return renderNav(null);
   } catch (e) {
     $("#main").innerHTML = `<div class="card empty">Could not load: ${esc(e.message)}</div>`;
   }
