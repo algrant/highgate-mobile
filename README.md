@@ -10,16 +10,12 @@ Aidan Burns, on a phone:
 
 No prose from the book is included. Each pattern links to its page in the book for the description.
 
-## Status: not published
+## Licence
 
-The book's 2017 edition carries a Creative Commons BY-NC-SA badge on its cover. It gives no version, and it is not
-clear on whose authority the badge was added: the author's last edition, 2014-05-16, has no licence. Until that is
-confirmed with the 2017 compilers (passing.zone), this repo is kept local and is not pushed to GitHub Pages.
+The book's 2017 edition carries a Creative Commons BY-NC-SA badge on its cover. This reader is shared on the same
+terms: non-commercial, with attribution, share-alike.
 
-When cleared, publishing is:
-1. `git remote add origin git@github.com:<user>/highgate-mobile.git`
-2. `git push -u origin main`
-3. In the repo settings, set Pages to deploy from `main`, folder `/` (root).
+Site: https://algrant.github.io/highgate-mobile/
 
 ## Layout
 

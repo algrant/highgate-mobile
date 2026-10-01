@@ -119,6 +119,7 @@ async function about() {
   $("#main").innerHTML = `<div class="card about-page"><h2>About</h2>
     <p><b>${esc(m.title)}</b> was compiled by ${esc(m.author)}; this is a way to browse its patterns on a phone. The book: <a href="${esc(m.pdf)}" target="_blank" rel="noopener">PDF</a>, <a href="${esc(m.author_site)}" target="_blank" rel="noopener">the author's site</a>. Its cover carries a Creative Commons BY-NC-SA badge (${esc(m.licence)}).</p>
     <p>The drawings here are redrawn from readings of the book's own diagrams; the walking animations are models built from its position frames and causal diagrams. Each pattern links to its page in the book for the full description.</p>
+    <p>Shared under the book's CC BY-NC-SA terms: non-commercial, with attribution.</p>
     <p>“Animate on passist” opens the pattern's siteswap on <a href="https://passist.org" target="_blank" rel="noopener">passist.org</a>, where one is known.</p></div>`;
 }
 
