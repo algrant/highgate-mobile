@@ -205,3 +205,5 @@ sup.star { color: #c0392b; font-weight: 700; }
 .pt-lines .pt-cells { padding-left: calc(var(--off) * var(--col)); }
 .pt-c.none { background: none; min-height: 0; visibility: hidden; }
 .pt-c.none::before { content: "·"; }
+.pt-block { margin-bottom: 8px; }
+.pt-range { font-size: 11px; color: var(--mute); margin: 4px 0 2px 4.4em; }

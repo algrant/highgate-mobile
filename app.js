@@ -166,8 +166,21 @@ function syncRowHtml(r) {
   return `<div class="pt-row pt-sync" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}</span><span class="pt-lr2"><i>L</i><i>R</i></span><span class="pt-lines">${line("L")}${line("R")}</span></div>`;
 }
 function tableHtml(t) {
-  return startHtml(t.start) + (t.stages || []).map(st => `${st.title ? `<div class="pt-stage">${esc(st.title)}</div>` : ""}<div class="pt-grid">${st.rows.map(r =>
-    t.sync ? syncRowHtml(r) : `<div class="pt-row" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}</span><span class="pt-cells">${r.cells.map(cellHtml).join("")}</span></div>`).join("")}</div>`).join("");
+  const rowHtml = r => t.sync ? syncRowHtml(r) : `<div class="pt-row" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}</span><span class="pt-cells">${r.cells.map(cellHtml).join("")}</span></div>`;
+  return startHtml(t.start) + (t.stages || []).map(st => {
+    const head = st.title ? `<div class="pt-stage">${esc(st.title)}</div>` : "";
+    const longest = Math.max(...st.rows.map(r => r.cells.length));
+    // (a long table folded at the pattern's period: a block per repetition, the columns lined up)
+    if (t.fold && longest > t.fold * 1.5 && !t.sync) {
+      const blocks = [];
+      for (let a = 0; a < longest; a += t.fold) {
+        const b = Math.min(longest, a + t.fold);
+        blocks.push(`<div class="pt-block"><div class="pt-range">beats ${a + 1}–${b}</div><div class="pt-grid">${st.rows.map(r => rowHtml({...r, off: a === 0 ? r.off : 0, cells: r.cells.slice(a, b)})).join("")}</div></div>`);
+      }
+      return head + blocks.join("");
+    }
+    return `${head}<div class="pt-grid">${st.rows.map(rowHtml).join("")}</div>`;
+  }).join("");
 }
 function wireTables() {
   document.querySelectorAll(".pt .tog .chip").forEach(b => b.onclick = () => {
