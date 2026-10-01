@@ -131,7 +131,7 @@ async function pattern(id) {
   const src = `From <i>${esc(INDEX.meta.title)}</i> by ${esc(INDEX.meta.author)}${p.label ? `, page ${esc(p.label)}` : ""}`;
   let html = `<div class="pat"><h1>${esc(p.name)}</h1><div class="sub">${esc(meta)}</div>
     <div class="source">${src} · <a href="${esc(p.pdf || INDEX.meta.pdf)}" target="_blank" rel="noopener">view the original page ↗</a></div>
-    ${p.passist ? `<div class="links"><a class="btn" href="${esc(p.passist)}" target="_blank" rel="noopener">Animate on passist${p.passist.includes("//alpha.") ? " (beta)" : ""} ↗</a></div>` : ""}`;
+    ${p.passist || notesOn() ? `<div class="links">${p.passist ? `<a class="btn" href="${esc(p.passist)}" target="_blank" rel="noopener">Animate on passist${p.passist.includes("//alpha.") ? " (beta)" : ""} ↗</a>` : ""}${noteButtonHtml()}</div>` : ""}`;
   if (models.length) html += `<div class="card"><h2>Walking (our model)</h2>${models.length > 1 ? `<div class="tabs">${models.map((x, i) => `<button class="chip${i === 0 ? " on" : ""}" data-m="${i}">${esc(x.lab)}</button>`).join("")}</div>` : ""}<div id="player"></div><div class="cap">Modelled from the book's position frames and causal diagram; tap ▶ to play.</div></div>`;
   html += `<article class="text">${bodyHtml(p) || (p.drawings || []).map(drawingHtml).join("")}</article>`;
   if (der && !(p.body || []).some(c => c.t === "l" && (c.h || "").includes(p.derived.value))) html += `<div class="card"><h2>Derived from the drawing</h2><dl class="notes">${der}</dl></div>`;
@@ -141,6 +141,7 @@ async function pattern(id) {
   window.scrollTo(0, 0);
   document.querySelectorAll(".drawbox").forEach(box => fitKids(box, p.drawings[+box.dataset.d]));
   wireToggles();
+  wireNote(p);
   if (models.length) {
     const start = i => { if (player) player.stop(); player = mvPlayer($("#player"), models[i].m); };
     start(0);
@@ -157,7 +158,8 @@ async function about() {
     <p><b>${esc(m.title)}</b> was compiled by ${esc(m.author)}; this is a way to browse its patterns on a phone. The book: <a href="${esc(m.pdf)}" target="_blank" rel="noopener">PDF</a>, <a href="${esc(m.author_site)}" target="_blank" rel="noopener">the author's site</a>. Its cover carries a Creative Commons BY-NC-SA badge (${esc(m.licence)}).</p>
     <p>This is a phone-friendly edition of the book: its words as written, in its order, chapter by chapter. Its drawings are redrawn from readings of the originals, and each can be switched to the book's own drawing; every page links to the same page of the original PDF. The walking animations are our models, built from the book's position frames and causal diagrams.</p>
     <p>Shared under the book's CC BY-NC-SA terms: non-commercial, with attribution.</p>
-    <p>“Animate on passist” opens the pattern's siteswap on <a href="https://passist.org" target="_blank" rel="noopener">passist.org</a>, where one is known; patterns with no global siteswap open on its beta, <a href="https://alpha.passist.org" target="_blank" rel="noopener">alpha.passist.org</a>, as a symmetric siteswap (everyone throws the same sequence) or an extended one (each juggler's own sequence, passes to a numbered juggler). Only links that passist checks as valid are shown.</p></div>`;
+    <p>“Animate on passist” opens the pattern's siteswap on <a href="https://passist.org" target="_blank" rel="noopener">passist.org</a>, where one is known; patterns with no global siteswap open on its beta, <a href="https://alpha.passist.org" target="_blank" rel="noopener">alpha.passist.org</a>, as a symmetric siteswap (everyone throws the same sequence) or an extended one (each juggler's own sequence, passes to a numbered juggler). Only links that passist checks as valid are shown.</p>
+    <p class="note-when"><a href="#/notes">Notes</a></p></div>`;
 }
 
 async function route() {
@@ -166,6 +168,7 @@ async function route() {
   try {
     if (h.startsWith("/p/")) return await pattern(decodeURIComponent(h.slice(3)));
     if (h === "/about") return await about();
+    if (h === "/notes") return await notesPage();
     return await home();
   } catch (e) {
     $("#main").innerHTML = `<div class="card empty">Could not load: ${esc(e.message)}</div>`;

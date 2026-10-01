@@ -92,3 +92,13 @@ figure.draw.show-orig .v-ours { display: none; }
 .paper.orig img { display: block; width: 100%; height: auto; }
 .bookcard { display: block; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; text-decoration: none; color: var(--ink); }
 .bookcard span { display: block; color: var(--mute); font-size: 13px; }
+
+/* notes (hidden unless turned on at #/notes) */
+#note-box { margin-top: 8px; width: 100%; }
+#note-box textarea, #gh-token { width: 100%; font: inherit; font-size: 16px; padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); }
+.note-row { display: flex; gap: 8px; align-items: center; margin: 8px 0; }
+.note-row #gh-token { flex: 1; min-width: 0; }
+.note-msg, .note-when { color: var(--mute); font-size: 13px; }
+.note-list { padding-left: 18px; }
+.note-list li { margin-bottom: 8px; }
+.notes-page h2 { margin-top: 14px; }

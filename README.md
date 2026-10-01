@@ -22,6 +22,8 @@ Site: https://algrant.github.io/highgate-mobile/
 ## Layout
 
 - `index.html`, `style.css`, `app.js`: the site. No build step.
+- `notes.js`: hidden notes (turned on at `#/notes`, linked from About): a ✎ Note button on patterns that files a
+  GitHub issue here, quietly via the API with a token kept in the browser, else via GitHub's new-issue page.
 - `lib/events.js`: the causal diagram renderer.
 - `lib/moving.js`: the walking-pattern player.
 - `data/index.json`: chapters and patterns, in book order.
