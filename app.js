@@ -158,8 +158,13 @@ function cellHtml(c) {
 function startHtml(st) {
   if (!st || !st.length) return "";
   const dots = n => n == null ? "?" : n ? "●".repeat(n) : "–";
-  return `<div class="pt-start"><div class="pt-stage">Start</div><div class="ps-grid">${st.map(x =>
-    `<div class="ps-j"><div class="ps-hands"><span class="ps-h"><span class="ps-dots">${dots(x.L)}</span><span class="ps-lr">L</span></span><span class="ps-h"><span class="ps-dots">${dots(x.R)}</span><span class="ps-lr">R</span></span></div>` +
+  // (the book's colour coding where it checks out: a hand's clubs coloured, the inside club -- thrown first --
+  // nearest the middle of the body: the left hand's on its right, the right hand's on its left)
+  const coloured = (cs, side) => (side === "L" ? cs.slice().reverse() : cs).map((c, k) =>
+    `<span class="club c-${esc(c)}" title="${esc(c)} club${(side === "L" ? k === cs.length - 1 : k === 0) && cs.length > 1 ? " (inside, thrown first)" : ""}"></span>`).join("");
+  const hand = (x, side) => x.colours && x.colours[side] ? (x.colours[side].length ? coloured(x.colours[side], side) : "–") : dots(x[side]);
+  return `<div class="pt-start"><div class="pt-stage">Start${st.some(x => x.colours) ? " · the book's colour coding" : ""}</div><div class="ps-grid">${st.map(x =>
+    `<div class="ps-j"><div class="ps-hands"><span class="ps-h"><span class="ps-dots">${hand(x, "L")}</span><span class="ps-lr">L</span></span><span class="ps-h"><span class="ps-dots">${hand(x, "R")}</span><span class="ps-lr">R</span></span></div>` +
     `<div class="ps-name j-${esc(x.j)}">${esc(x.who)}</div>${x.offset ? `<div class="ps-off">${esc(x.offset === 0.5 ? "½" : String(x.offset))} beat${x.offset > 1 ? "s" : ""} after ${esc(x.after || "")}</div>` : ""}</div>`).join("")}</div></div>`;
 }
 // a synchronous juggler: two lines, left hand over right, a beat's throws in their hand's line (blank where that
