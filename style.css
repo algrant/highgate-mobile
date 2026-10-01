@@ -181,3 +181,18 @@ sup.star { color: #c0392b; font-weight: 700; }
 .booktable { border-collapse: collapse; font-size: 14px; min-width: 60%; }
 .booktable th, .booktable td { border: 1px solid var(--line); padding: 4px 10px; text-align: left; vertical-align: top; }
 .booktable th { background: var(--chip); }
+.pt-c.b { display: inline-flex; flex-direction: column; gap: 2px; padding: 0; background: none; }
+.pt-c.b .pt-c { margin: 0; width: 100%; }
+.pt-c .hd { font-style: normal; font-size: 9px; opacity: .8; margin-right: 2px; vertical-align: 1px; }
+.pt-start { margin-bottom: 6px; }
+.ps-grid { display: flex; gap: 18px; flex-wrap: wrap; }
+.ps-j { display: flex; flex-direction: column; align-items: center; }
+.ps-hands { display: flex; gap: 6px; }
+.ps-h { display: flex; flex-direction: column; align-items: center; min-width: 2.2em; padding: 2px 4px; border-radius: 6px; background: var(--bg); }
+.ps-dots { letter-spacing: 1px; font-size: 13px; color: var(--ink); line-height: 1.2; }
+.ps-lr { font-size: 10px; color: var(--mute); }
+.ps-name { font-weight: 700; font-size: 13px; margin-top: 2px; }
+.ps-name[class*="j-"] { color: var(--c); }
+.ps-name.j-A { --c: #d9534f; } .ps-name.j-B { --c: #2a7ab9; } .ps-name.j-C { --c: #3c9a3c; } .ps-name.j-D { --c: #c77c11; }
+.ps-off { font-size: 11px; color: var(--mute); }
+.pt-c.none { background: none; min-height: 1.6em; }
