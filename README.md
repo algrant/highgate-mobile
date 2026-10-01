@@ -7,7 +7,8 @@ words, in its order, chapter by chapter, with its drawings. The site:
   book's own drawing.
 - **Walking:** 44 walking patterns animated.
 - **Links:** each pattern links to its page in the book's PDF, and to [passist.org](https://passist.org) where a
-  global siteswap is known.
+  global siteswap is known, else to its beta [alpha.passist.org](https://alpha.passist.org) as a symmetric or
+  extended siteswap (only links passist checks as valid, via `extract/passist_check.py`).
 
 Every page links to the same page of the original PDF.
 
