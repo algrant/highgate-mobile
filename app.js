@@ -126,15 +126,18 @@ async function pattern(id) {
                   ...(p.also_moving || []).map(m => ({m, lab: "Modern Club Passing"}))];
   const meta = [p.chapter, p.label ? `book page ${p.label}` : "", jLabel(p.jugglers), p.objects ? `${p.objects} clubs` : "", p.timing || ""].filter(Boolean).join(" · ");
   const notes = (p.notations || []).map(n => `<dt>${esc({"hg-siteswap": "siteswap", "prechac": "préchac", "hg-siteswap-in-title": "siteswap (title)", "hg-siteswap-in-text": "siteswap (text)"}[n.type] || n.type)}</dt><dd>${esc(n.value)}</dd>`).join("");
-  const der = p.derived && !(p.notations || []).some(n => n.value === p.derived.value)
-    ? `<dt>derived from the drawing (${esc(p.derived.kind || "")}${p.derived.confidence ? ", " + esc(p.derived.confidence) + " confidence" : ""})</dt><dd>${esc(p.derived.value)}</dd>` : "";
+  const sy = p.derived && p.derived.sync;
+  const syncHtml = sy ? `<dt>synchronous, every beat both hands (idle hand holds a 2)</dt>${Object.entries(sy.per_juggler).map(([j, v]) => `<dd>${esc(j)}: ${esc(v)}</dd>`).join("")}` +
+    (sy.drawn ? `<dt>as drawn (the drawing throws something once, e.g. a trick)</dt>${Object.entries(sy.drawn).map(([j, v]) => `<dd>${esc(j)}: ${esc(v)}</dd>`).join("")}` : "") : "";
+  const der = (p.derived && p.derived.value && !(p.notations || []).some(n => n.value === p.derived.value)
+    ? `<dt>derived from the drawing (${esc(p.derived.kind || "")}${p.derived.confidence ? ", " + esc(p.derived.confidence) + " confidence" : ""})</dt><dd>${esc(p.derived.value)}</dd>` : "") + syncHtml;
   const src = `From <i>${esc(INDEX.meta.title)}</i> by ${esc(INDEX.meta.author)}${p.label ? `, page ${esc(p.label)}` : ""}`;
   let html = `<div class="pat"><h1>${esc(p.name)}</h1><div class="sub">${esc(meta)}</div>
     <div class="source">${src} · <a href="${esc(p.pdf || INDEX.meta.pdf)}" target="_blank" rel="noopener">view the original page ↗</a></div>
     ${p.passist || notesOn() ? `<div class="links">${p.passist ? `<a class="btn" href="${esc(p.passist)}" target="_blank" rel="noopener">Animate on passist${p.passist.includes("//alpha.") ? " (beta)" : ""} ↗</a>` : ""}${noteButtonHtml()}</div>` : ""}`;
   if (models.length) html += `<div class="card"><h2>Walking (our model)</h2>${models.length > 1 ? `<div class="tabs">${models.map((x, i) => `<button class="chip${i === 0 ? " on" : ""}" data-m="${i}">${esc(x.lab)}</button>`).join("")}</div>` : ""}<div id="player"></div><div class="cap">Modelled from the book's position frames and causal diagram; tap ▶ to play.</div></div>`;
   html += `<article class="text">${bodyHtml(p) || (p.drawings || []).map(drawingHtml).join("")}</article>`;
-  if (der && !(p.body || []).some(c => c.t === "l" && (c.h || "").includes(p.derived.value))) html += `<div class="card"><h2>Derived from the drawing</h2><dl class="notes">${der}</dl></div>`;
+  if (der && (sy || !(p.body || []).some(c => c.t === "l" && (c.h || "").includes(p.derived.value)))) html += `<div class="card"><h2>Derived from the drawing</h2><dl class="notes">${der}</dl></div>`;
   if ((p.related || []).length) html += `<div class="card"><h2>Mentioned</h2>${p.related.map(r => `<a class="btn" href="#/p/${esc(r.id)}">${esc(r.name)}</a>`).join(" ")}</div>`;
   html += `<div class="pager">${prev ? `<a class="btn" href="#/p/${esc(prev.id)}">← ${esc(prev.name)}</a>` : "<span></span>"}${next ? `<a class="btn" href="#/p/${esc(next.id)}">${esc(next.name)} →</a>` : "<span></span>"}</div></div>`;
   $("#main").innerHTML = html;
