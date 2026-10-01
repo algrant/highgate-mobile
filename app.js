@@ -140,7 +140,7 @@ function cellHtml(c) {
   const sup = c.sp === 2 ? "²" : c.sp === 3 ? "³" : c.sp === 0 ? " zap" : "";
   const tip = c.k === "p" ? `${c.d ? "drop-back" : c.sp === 2 ? "double pass" : c.sp === 3 ? "triple pass" : "pass"} to ${c.w}${c.x ? ", crossing" : ""}${c.h ? ", hurried" : ""}` : `${c.h ? "hurried " : ""}${c.w}`;
   const txt = c.k === "p" ? `${c.d ? "↩" : ""}${esc(c.w)}${sup}${c.x ? "✕" : ""}` : esc(c.w);
-  const hand = c.hand ? `<i class="hd">${c.hand}</i>` : "";
+  const hand = "";
   return `<span class="pt-c ${c.k === "p" ? "p" : "s"}${c.to ? " to-" + c.to : ""}${c.h ? " h" : ""}" title="${esc((c.hand ? (c.hand === "R" ? "right hand: " : "left hand: ") : "") + tip)}">${hand}${txt}${c.k === "s" && c.x ? "✕" : ""}</span>`;
 }
 // the clubs each juggler starts with: a dot a club in each hand, the hands' letters, the name under them
@@ -151,9 +151,22 @@ function startHtml(st) {
     `<div class="ps-j"><div class="ps-hands"><span class="ps-h"><span class="ps-dots">${dots(x.L)}</span><span class="ps-lr">L</span></span><span class="ps-h"><span class="ps-dots">${dots(x.R)}</span><span class="ps-lr">R</span></span></div>` +
     `<div class="ps-name j-${esc(x.j)}">${esc(x.who)}</div>${x.offset ? `<div class="ps-off">${esc(x.offset === 0.5 ? "½" : String(x.offset))} beat${x.offset > 1 ? "s" : ""} after ${esc(x.after || "")}</div>` : ""}</div>`).join("")}</div></div>`;
 }
+// a synchronous juggler: two lines, left hand over right, a beat's throws in their hand's line (blank where that
+// hand does not throw); "L / R" once beside the name
+function syncRowHtml(r) {
+  const known = r.cells.some(c => c.k === "b" || c.hand);
+  if (!known) return `<div class="pt-row" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}</span><span class="pt-cells">${r.cells.map(cellHtml).join("")}</span></div>`;
+  const slot = (c, h) => {
+    const items = c.k === "b" ? c.items : [c];
+    const it = items.find(i => i.hand === h);
+    return it ? cellHtml(it) : `<span class="pt-c none"></span>`;
+  };
+  const line = h => `<span class="pt-cells">${r.cells.map(c => slot(c, h)).join("")}</span>`;
+  return `<div class="pt-row pt-sync" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}</span><span class="pt-lr2"><i>L</i><i>R</i></span><span class="pt-lines">${line("L")}${line("R")}</span></div>`;
+}
 function tableHtml(t) {
   return startHtml(t.start) + (t.stages || []).map(st => `${st.title ? `<div class="pt-stage">${esc(st.title)}</div>` : ""}<div class="pt-grid">${st.rows.map(r =>
-    `<div class="pt-row" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}</span><span class="pt-cells">${r.cells.map(cellHtml).join("")}</span></div>`).join("")}</div>`).join("");
+    t.sync ? syncRowHtml(r) : `<div class="pt-row" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}</span><span class="pt-cells">${r.cells.map(cellHtml).join("")}</span></div>`).join("")}</div>`).join("");
 }
 function wireTables() {
   document.querySelectorAll(".pt .tog .chip").forEach(b => b.onclick = () => {
@@ -177,7 +190,7 @@ function bodyHtml(p) {
       let j = i, words = "";
       while (j < body.length && body[j].t === "l" && PATLINE.test(plain(body[j].h))) { words += `<p class="lab">${body[j].h}</p>`; j++; }
       out += `<div class="pt${TABLE ? "" : " show-words"}"><div class="tog"><button class="chip${TABLE ? " on" : ""}" data-v="table">Table</button><button class="chip${TABLE ? "" : " on"}" data-v="words">The book's words</button></div>` +
-             `<div class="pt-table">${tableHtml(p.table)}${(p.table.stages || []).length ? `<div class="cap">Read from the book's words: passes coloured by who catches them, ✕ crossing, ² double, ↩ drop-back, dotted: hurried${p.table.sync ? ", R / L: the hand; stacked: both hands at once" : ""}.</div>` : ""}</div><div class="pt-words">${words}</div></div>`;
+             `<div class="pt-table">${tableHtml(p.table)}${(p.table.stages || []).length ? `<div class="cap">Read from the book's words: passes coloured by who catches them, ✕ crossing, ² double, ↩ drop-back, dotted: hurried${p.table.sync ? ", each juggler's left hand over their right" : ""}.</div>` : ""}</div><div class="pt-words">${words}</div></div>`;
       tabled = true;
       i = j - 1;
       continue;

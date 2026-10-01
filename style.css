@@ -196,3 +196,12 @@ sup.star { color: #c0392b; font-weight: 700; }
 .ps-name.j-A { --c: #d9534f; } .ps-name.j-B { --c: #2a7ab9; } .ps-name.j-C { --c: #3c9a3c; } .ps-name.j-D { --c: #c77c11; }
 .ps-off { font-size: 11px; color: var(--mute); }
 .pt-c.none { background: none; min-height: 1.6em; }
+/* synchronous tables: a line per hand */
+.pt-c { align-self: center; line-height: 1.35; }
+.pt-row.pt-sync { align-items: center; margin: 2px 0 6px; }
+.pt-lr2 { display: flex; flex-direction: column; gap: 3px; margin-right: 4px; }
+.pt-lr2 i { font-style: normal; font-size: 10px; color: var(--mute); line-height: 1.35; padding: 3px 0; }
+.pt-lines { display: flex; flex-direction: column; gap: 3px; }
+.pt-lines .pt-cells { padding-left: calc(var(--off) * var(--col)); }
+.pt-c.none { background: none; min-height: 0; visibility: hidden; }
+.pt-c.none::before { content: "·"; }
