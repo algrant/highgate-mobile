@@ -19,6 +19,12 @@ terms: non-commercial, with attribution, share-alike.
 
 Site: https://algrant.github.io/highgate-mobile/
 
+## Pattern tables
+
+Each pattern's "Pattern for ..." lines (and the walking patterns' stages) show as a table read from the book's
+words (errata applied): a row per juggler, a column per beat, passes coloured by who catches them. "The book's
+words" switches back to the lines as printed.
+
 ## Screens
 
 One layout per width: a phone gets one column; from 900px the chapters sit beside the page and the book's page

@@ -125,10 +125,47 @@ function topSiteswap(p) {
     : `<div class="topss"><span class="lab">${esc(lab)}</span> <code>${esc(val)}</code> <span class="how">${esc(how)}</span></div>`;
 }
 // the book's words, block by block, the drawings in place
+// the "Pattern for ..." lines as a table: a row per juggler, a column per beat, the passes coloured by who catches
+// them (the animation's colours); the book's lines a tap away
+const PATLINE = /^(Starting pattern for|Pattern for|After \w+ walks)/;
+let TABLE = (() => { try { return localStorage.getItem("hg-words") !== "1"; } catch (e) { return true; } })();
+function cellHtml(c) {
+  const sup = c.sp === 2 ? "²" : c.sp === 3 ? "³" : c.sp === 0 ? " zap" : "";
+  const tip = c.k === "p" ? `${c.d ? "drop-back" : c.sp === 2 ? "double pass" : c.sp === 3 ? "triple pass" : "pass"} to ${c.w}${c.x ? ", crossing" : ""}${c.h ? ", hurried" : ""}` : `${c.h ? "hurried " : ""}${c.w}`;
+  const txt = c.k === "p" ? `${c.d ? "↩" : ""}${esc(c.w)}${sup}${c.x ? "✕" : ""}` : esc(c.w);
+  return `<span class="pt-c ${c.k === "p" ? "p" : "s"}${c.to ? " to-" + c.to : ""}${c.h ? " h" : ""}" title="${esc(tip)}">${txt}</span>`;
+}
+function tableHtml(t) {
+  return t.stages.map(st => `${st.title ? `<div class="pt-stage">${esc(st.title)}</div>` : ""}<div class="pt-grid">${st.rows.map(r =>
+    `<div class="pt-row" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}</span><span class="pt-cells">${r.cells.map(cellHtml).join("")}</span></div>`).join("")}</div>`).join("");
+}
+function wireTables() {
+  document.querySelectorAll(".pt .tog .chip").forEach(b => b.onclick = () => {
+    TABLE = b.dataset.v === "table";
+    try { localStorage.setItem("hg-words", TABLE ? "0" : "1"); } catch (e) {}
+    document.querySelectorAll(".pt").forEach(f => {
+      f.classList.toggle("show-words", !TABLE);
+      f.querySelectorAll(".tog .chip").forEach(x => x.classList.toggle("on", (x.dataset.v === "table") === TABLE));
+    });
+  });
+}
 function bodyHtml(p) {
-  let out = "", list = false;
-  for (const c of p.body || []) {
+  let out = "", list = false, tabled = false;
+  const body = p.body || [];
+  for (let i = 0; i < body.length; i++) {
+    const c = body[i];
     if (c.t !== "li" && list) { out += "</ul>"; list = false; }
+    const plain = h => (h || "").replace(/<[^>]*>/g, "").trim();
+    if (c.t === "l" && p.table && !tabled && PATLINE.test(plain(c.h))) {
+      // the run of pattern lines (and the stage lines between them)
+      let j = i, words = "";
+      while (j < body.length && body[j].t === "l" && PATLINE.test(plain(body[j].h))) { words += `<p class="lab">${body[j].h}</p>`; j++; }
+      out += `<div class="pt${TABLE ? "" : " show-words"}"><div class="tog"><button class="chip${TABLE ? " on" : ""}" data-v="table">Table</button><button class="chip${TABLE ? "" : " on"}" data-v="words">The book's words</button></div>` +
+             `<div class="pt-table">${tableHtml(p.table)}<div class="cap">Read from the book's words: passes coloured by who catches them, ✕ crossing, ² double, ↩ drop-back, dotted: hurried.</div></div><div class="pt-words">${words}</div></div>`;
+      tabled = true;
+      i = j - 1;
+      continue;
+    }
     if (c.t === "p") out += `<p>${c.h}</p>`;
     else if (c.t === "h") out += `<h3>${c.h}</h3>`;
     else if (c.t === "l") out += `<p class="lab">${c.h}</p>`;
@@ -179,6 +216,7 @@ async function pattern(id) {
   window.scrollTo(0, 0);
   document.querySelectorAll(".drawbox").forEach(box => fitKids(box, p.drawings[+box.dataset.d]));
   wireToggles();
+  wireTables();
   wireNote(p);
   if (models.length) {
     const start = i => { if (player) player.stop(); player = mvPlayer($("#player"), models[i].m); };

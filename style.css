@@ -153,3 +153,25 @@ sup.star { color: #c0392b; font-weight: 700; }
 .only-wide { display: none; }
 @media (min-width: 1200px) { .only-wide { display: block; } .only-narrow { display: none; } }
 @media (min-width: 900px) { .paper.wide svg { width: auto; max-width: 100%; max-height: 280px; margin: 0 auto; } }
+
+/* the pattern lines as a table */
+.pt { margin: 10px 0; }
+.pt .tog { display: flex; gap: 6px; margin-bottom: 6px; }
+.pt .tog .chip { font-size: 12px; padding: 3px 9px; }
+.pt .pt-words { display: none; }
+.pt.show-words .pt-words { display: block; }
+.pt.show-words .pt-table { display: none; }
+.pt-table { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+.pt-stage { font-size: 12px; color: var(--mute); text-transform: uppercase; letter-spacing: .04em; margin: 10px 0 4px; }
+.pt-grid { display: inline-flex; flex-direction: column; gap: 3px; min-width: 100%; --col: 3.6em; }
+.pt-row { display: flex; align-items: center; white-space: nowrap; }
+.pt-who { flex: 0 0 4.4em; font-weight: 700; font-size: 13px; }
+.pt-cells { display: flex; padding-left: calc(var(--off) * var(--col)); }
+.pt-c { flex: 0 0 var(--col); width: var(--col); box-sizing: border-box; text-align: center; font-size: 12.5px; padding: 3px 0; margin-right: 2px; border-radius: 5px; }
+.pt-c.s { color: var(--mute); background: var(--bg); }
+.pt-c.p { color: #fff; font-weight: 600; background: #888; }
+.pt-c.h { text-decoration: underline dotted; text-underline-offset: 3px; }
+.pt-c.to-A, .pt-who.j-A { --c: #d9534f; } .pt-c.to-B, .pt-who.j-B { --c: #2a7ab9; }
+.pt-c.to-C, .pt-who.j-C { --c: #3c9a3c; } .pt-c.to-D, .pt-who.j-D { --c: #c77c11; }
+.pt-c.p[class*="to-"] { background: var(--c); }
+.pt-who[class*="j-"] { color: var(--c); }
