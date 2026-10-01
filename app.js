@@ -9,9 +9,19 @@ let INDEX = null, FLAT = [], player = null;
 const filters = {moving: false, j: null, ss: false};
 const cache = {};
 
+// the version this page was loaded with (index.html names it on app.js); a newer site reloads the page once, so a
+// cached index.html (GitHub Pages lets browsers keep it ten minutes) never shows yesterday's code
+const APP_V = ((document.currentScript && document.currentScript.src) || "").split("v=")[1] || "";
 async function loadIndex() {
   if (INDEX) return INDEX;
   INDEX = await (await fetch("data/index.json", {cache: "no-cache"})).json();   // revalidated: it names the version
+  const v = INDEX.meta.version || "";
+  try {
+    if (APP_V && v && v !== APP_V && sessionStorage.getItem("hg-reloaded") !== v) {
+      sessionStorage.setItem("hg-reloaded", v);
+      location.reload();
+    }
+  } catch (e) {}
   FLAT = INDEX.chapters.flatMap(c => c.patterns.map(p => ({...p, chapter: c.title})));
   return INDEX;
 }
