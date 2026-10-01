@@ -138,7 +138,7 @@ function cellHtml(c) {
     return `<span class="pt-c b">${rest.length ? c.items.map(cellHtml).join("") : slot(R) + slot(L)}</span>`;
   }
   const sup = c.sp === 2 ? "²" : c.sp === 3 ? "³" : c.sp === 0 ? " zap" : "";
-  const selfTip = c => c.n >= 5 ? `${c.n}: ${(c.word || "self").replace("-", " ")}, ${c.n % 2 ? "crossing to the other hand" : "back to the same hand"}` : `${c.word && c.word !== c.w ? c.word.replace("-", " ") + " (" + c.w + ")" : c.w}`;
+  const selfTip = c => c.x ? `${c.n}x: ${(c.word || "self").replace("-", " ")}, crossing to the other hand` : c.n >= 5 ? `${c.n}: ${(c.word || "self").replace("-", " ")}, ${c.n % 2 ? "crossing to the other hand" : "back to the same hand"}` : `${c.word && c.word !== c.w ? c.word.replace("-", " ") + " (" + c.w + ")" : c.w}`;
   const tip = c.k === "p" ? `${c.d ? "drop-back" : c.sp === 2 ? "double pass" : c.sp === 3 ? "triple pass" : "pass"} to ${c.w}${c.x ? ", crossing" : ""}${c.h ? ", hurried" : ""}` : `${c.h ? "hurried " : ""}${selfTip(c)}`;
   const txt = c.k === "p" ? `${c.d ? "↩" : ""}${esc(c.w)}${sup}${c.x ? "✕" : ""}` : esc(c.w);
   const hand = "";
