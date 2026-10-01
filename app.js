@@ -11,12 +11,12 @@ const cache = {};
 
 async function loadIndex() {
   if (INDEX) return INDEX;
-  INDEX = await (await fetch("data/index.json")).json();
+  INDEX = await (await fetch("data/index.json", {cache: "no-cache"})).json();   // revalidated: it names the version
   FLAT = INDEX.chapters.flatMap(c => c.patterns.map(p => ({...p, chapter: c.title})));
   return INDEX;
 }
 async function loadPattern(id) {
-  if (!cache[id]) cache[id] = await (await fetch(`data/p/${encodeURIComponent(id)}.json`)).json();
+  if (!cache[id]) cache[id] = await (await fetch(`data/p/${encodeURIComponent(id)}.json?v=${INDEX.meta.version || ""}`)).json();
   return cache[id];
 }
 
