@@ -88,7 +88,7 @@ function drawingHtml(d, i) {
   const orig = d.orig ? `<div class="paper orig"><img src="${esc(d.orig)}" alt="The book's drawing" loading="lazy"></div>` : "";
   const showOrig = !ours || ORIG;
   const tog = ours && orig ? `<div class="tog"><button class="chip${showOrig ? "" : " on"}" data-v="ours">Redrawn</button><button class="chip${showOrig ? " on" : ""}" data-v="orig">Original</button></div>` : "";
-  return `<figure class="draw${showOrig ? " show-orig" : ""}">${tog}<div class="v-ours">${ours}</div><div class="v-orig">${orig}</div><figcaption class="cap">${showOrig ? "" : ""}${esc(d.kind === "drawing" ? "the book's drawing" : d.kind)} · ${esc(d.file)}</figcaption></figure>`;
+  return `<figure class="draw${showOrig ? " show-orig" : ""}">${tog}<div class="v-ours">${ours}</div><div class="v-orig">${orig}</div><figcaption class="cap">${esc(d.kind === "drawing" ? "the book's drawing" : d.kind)} · ${esc(d.file)}${d.star ? ` · corrected<sup class="star">*</sup>` : ""}</figcaption></figure>`;
 }
 let ORIG = (() => { try { return localStorage.getItem("hg-orig") === "1"; } catch (e) { return false; } })();
 function wireToggles() {
@@ -101,6 +101,24 @@ function wireToggles() {
       f.querySelectorAll(".tog .chip").forEach(x => x.classList.toggle("on", (x.dataset.v === "orig") === ORIG));
     });
   });
+}
+// the pattern's siteswap at the top: the book's own (a global siteswap before a préchac), else ours from its drawing
+function topSiteswap(p) {
+  const NAME = {"hg-siteswap": "siteswap", "prechac": "préchac", "hg-siteswap-in-title": "siteswap", "hg-siteswap-in-text": "siteswap"};
+  const rank = t => ["hg-siteswap", "prechac", "hg-siteswap-in-title", "hg-siteswap-in-text"].indexOf(t);
+  const st = (p.notations || []).filter(n => rank(n.type) >= 0).sort((a, b) => rank(a.type) - rank(b.type))[0];
+  const d = p.derived;
+  let lab, val, how;
+  if (st) { lab = NAME[st.type]; val = st.value; how = "the book's"; }
+  else if (d && d.sync) { lab = "sync siteswap"; val = Object.entries(d.sync.per_juggler).map(([j, v]) => `${j}: ${v}`).join("  ·  "); how = "from the drawing"; }
+  else if (d && (d.global || d.value)) {
+    const k = d.kind || "";
+    lab = d.global && /global|local/.test(k) ? "siteswap" : /prechac/.test(k) ? "préchac" : "siteswap";
+    val = /local/.test(k) && d.global ? d.global : (d.value || d.global); how = "from the drawing";
+  }
+  else if (d && d.per_juggler) { lab = "per juggler"; val = Object.entries(d.per_juggler).map(([j, v]) => `${j}: ${v}`).join("  ·  "); how = "from the drawing"; }
+  if (!val) return "";
+  return `<div class="topss"><span class="lab">${esc(lab)}</span> <code>${esc(val)}</code> <span class="how">${esc(how)}</span></div>`;
 }
 // the book's words, block by block, the drawings in place
 function bodyHtml(p) {
@@ -134,9 +152,10 @@ async function pattern(id) {
   const src = `From <i>${esc(INDEX.meta.title)}</i> by ${esc(INDEX.meta.author)}${p.label ? `, page ${esc(p.label)}` : ""}`;
   let html = `<div class="pat"><h1>${esc(p.name)}</h1><div class="sub">${esc(meta)}</div>
     <div class="source">${src} · <a href="${esc(p.pdf || INDEX.meta.pdf)}" target="_blank" rel="noopener">view the original page ↗</a></div>
+    ${topSiteswap(p)}
     ${p.passist || p.p4ssist || notesOn() ? `<div class="links">${p.passist ? `<a class="btn" href="${esc(p.passist)}" target="_blank" rel="noopener">Animate on passist${p.passist.includes("//alpha.") ? " (beta)" : ""} ↗</a>` : ""}${p.p4ssist ? `<a class="btn" href="${esc(p.p4ssist.url)}" target="_blank" rel="noopener">${p.p4ssist.kind === "feed" ? "Feed" : p.p4ssist.kind === "sync" ? "Sync" : "Layers"} on pass.algrant.ca ↗</a>` : ""}${noteButtonHtml()}</div>${p.p4ssist && p.p4ssist.kind === "feed" && p.p4ssist.names[0] !== "A" ? `<div class="cap">On pass.algrant.ca the feeder is juggler A (here ${esc(({A: "Anne", B: "Ben", C: "Clare"})[p.p4ssist.names[0]] || p.p4ssist.names[0])}).</div>` : ""}` : ""}`;
   if (models.length) html += `<div class="card"><h2>Walking (our model)</h2>${models.length > 1 ? `<div class="tabs">${models.map((x, i) => `<button class="chip${i === 0 ? " on" : ""}" data-m="${i}">${esc(x.lab)}</button>`).join("")}</div>` : ""}<div id="player"></div><div class="cap">Modelled from the book's position frames and causal diagram; tap ▶ to play.</div></div>`;
-  html += `<article class="text">${bodyHtml(p) || (p.drawings || []).map(drawingHtml).join("")}</article>`;
+  html += `<article class="text">${bodyHtml(p) || (p.drawings || []).map(drawingHtml).join("")}${(p.errata || []).length ? `<div class="errata"><h3>Corrections</h3>${p.errata.map(n => `<p><sup class="star">*</sup> ${esc(n)}</p>`).join("")}</div>` : ""}</article>`;
   if (der && (sy || !(p.body || []).some(c => c.t === "l" && (c.h || "").includes(p.derived.value)))) html += `<div class="card"><h2>Derived from the drawing</h2><dl class="notes">${der}</dl></div>`;
   if ((p.related || []).length) html += `<div class="card"><h2>Mentioned</h2>${p.related.map(r => `<a class="btn" href="#/p/${esc(r.id)}">${esc(r.name)}</a>`).join(" ")}</div>`;
   html += `<div class="pager">${prev ? `<a class="btn" href="#/p/${esc(prev.id)}">← ${esc(prev.name)}</a>` : "<span></span>"}${next ? `<a class="btn" href="#/p/${esc(next.id)}">${esc(next.name)} →</a>` : "<span></span>"}</div></div>`;

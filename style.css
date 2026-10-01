@@ -102,3 +102,13 @@ figure.draw.show-orig .v-ours { display: none; }
 .note-list { padding-left: 18px; }
 .note-list li { margin-bottom: 8px; }
 .notes-page h2 { margin-top: 14px; }
+
+/* the pattern's siteswap at the top; the book's errata */
+.topss { margin: 2px 0 10px; font-size: 14px; }
+.topss .lab { color: var(--mute); font-size: 12px; text-transform: uppercase; letter-spacing: .03em; }
+.topss code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 15px; background: var(--chip); padding: 2px 6px; border-radius: 6px; word-break: break-all; }
+.topss .how { color: var(--mute); font-size: 12px; }
+sup.star { color: #c0392b; font-weight: 700; }
+.errata { border-top: 1px solid var(--line); margin-top: 12px; padding-top: 6px; font-size: 13px; color: var(--mute); }
+.errata h3 { font-size: 13px; margin: 6px 0; text-transform: uppercase; letter-spacing: .03em; }
+.errata p { margin: 6px 0; }
