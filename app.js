@@ -138,10 +138,11 @@ function cellHtml(c) {
     return `<span class="pt-c b">${rest.length ? c.items.map(cellHtml).join("") : slot(R) + slot(L)}</span>`;
   }
   const sup = c.sp === 2 ? "²" : c.sp === 3 ? "³" : c.sp === 0 ? " zap" : "";
-  const tip = c.k === "p" ? `${c.d ? "drop-back" : c.sp === 2 ? "double pass" : c.sp === 3 ? "triple pass" : "pass"} to ${c.w}${c.x ? ", crossing" : ""}${c.h ? ", hurried" : ""}` : `${c.h ? "hurried " : ""}${c.w}`;
+  const selfTip = c => c.n >= 5 ? `${c.n}: ${(c.word || "self").replace("-", " ")}, ${c.n % 2 ? "crossing to the other hand" : "back to the same hand"}` : `${c.word && c.word !== c.w ? c.word.replace("-", " ") + " (" + c.w + ")" : c.w}`;
+  const tip = c.k === "p" ? `${c.d ? "drop-back" : c.sp === 2 ? "double pass" : c.sp === 3 ? "triple pass" : "pass"} to ${c.w}${c.x ? ", crossing" : ""}${c.h ? ", hurried" : ""}` : `${c.h ? "hurried " : ""}${selfTip(c)}`;
   const txt = c.k === "p" ? `${c.d ? "↩" : ""}${esc(c.w)}${sup}${c.x ? "✕" : ""}` : esc(c.w);
   const hand = "";
-  return `<span class="pt-c ${c.k === "p" ? "p" : "s"}${c.to ? " to-" + c.to : ""}${c.h ? " h" : ""}" title="${esc((c.hand ? (c.hand === "R" ? "right hand: " : "left hand: ") : "") + tip)}">${hand}${txt}${c.k === "s" && c.x ? "✕" : ""}</span>`;
+  return `<span class="pt-c ${c.k === "p" ? "p" : "s"}${c.to ? " to-" + c.to : ""}${c.h ? " h" : ""}" title="${esc((c.hand ? (c.hand === "R" ? "right hand: " : "left hand: ") : "") + tip)}">${hand}${txt}</span>`;
 }
 // the clubs each juggler starts with: a dot a club in each hand, the hands' letters, the name under them
 function startHtml(st) {
@@ -190,7 +191,7 @@ function bodyHtml(p) {
       let j = i, words = "";
       while (j < body.length && body[j].t === "l" && PATLINE.test(plain(body[j].h))) { words += `<p class="lab">${body[j].h}</p>`; j++; }
       out += `<div class="pt${TABLE ? "" : " show-words"}"><div class="tog"><button class="chip${TABLE ? " on" : ""}" data-v="table">Table</button><button class="chip${TABLE ? "" : " on"}" data-v="words">The book's words</button></div>` +
-             `<div class="pt-table">${tableHtml(p.table)}${(p.table.stages || []).length ? `<div class="cap">Read from the book's words: passes coloured by who catches them, ✕ crossing, ² double, ↩ drop-back, dotted: hurried${p.table.sync ? ", each juggler's left hand over their right" : ""}.</div>` : ""}</div><div class="pt-words">${words}</div></div>`;
+             `<div class="pt-table">${tableHtml(p.table)}${(p.table.stages || []).length ? `<div class="cap">Read from the book's words: passes coloured by who catches them, ✕ crossing, ² double, ↩ drop-back, dotted: hurried, 5, 6 … selfs by their siteswap number${p.table.sync ? ", each juggler's left hand over their right" : ""}.</div>` : ""}</div><div class="pt-words">${words}</div></div>`;
       tabled = true;
       i = j - 1;
       continue;
