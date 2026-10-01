@@ -175,3 +175,9 @@ sup.star { color: #c0392b; font-weight: 700; }
 .pt-c.to-C, .pt-who.j-C { --c: #3c9a3c; } .pt-c.to-D, .pt-who.j-D { --c: #c77c11; }
 .pt-c.p[class*="to-"] { background: var(--c); }
 .pt-who[class*="j-"] { color: var(--c); }
+
+/* the book's ruled tables */
+.booktable-wrap { overflow-x: auto; margin: 10px 0; }
+.booktable { border-collapse: collapse; font-size: 14px; min-width: 60%; }
+.booktable th, .booktable td { border: 1px solid var(--line); padding: 4px 10px; text-align: left; vertical-align: top; }
+.booktable th { background: var(--chip); }

@@ -170,6 +170,7 @@ function bodyHtml(p) {
     else if (c.t === "h") out += `<h3>${c.h}</h3>`;
     else if (c.t === "l") out += `<p class="lab">${c.h}</p>`;
     else if (c.t === "hr") out += "<hr>";
+    else if (c.t === "table") out += `<div class="booktable-wrap"><table class="booktable">${c.rows.map((r, k) => `<tr>${r.map(h => k === 0 && c.head ? `<th>${h}</th>` : `<td>${h}</td>`).join("")}</tr>`).join("")}</table></div>`;
     else if (c.t === "li") { if (!list) { out += "<ul>"; list = true; } out += `<li>${c.h}</li>`; }
     else if (c.t === "d") out += drawingHtml(p.drawings[c.i], c.i);
   }
