@@ -22,8 +22,8 @@ Site: https://algrant.github.io/highgate-mobile/
 ## Screens
 
 One layout per width: a phone gets one column; from 900px the chapters sit beside the page and the book's page
-opens in a popover; from 1200px a panel (siteswap, links, walking animation) stays in view beside the words, and
-redrawn and original drawings show together. Keys: ← → previous / next pattern, / search, o redrawn or original,
+opens in a popover; from 1200px a panel (siteswap, links, walking animation) stays in view beside the words, (drawings
+still switch between redrawn and the book's own). Keys: ← → previous / next pattern, / search, o redrawn or original,
 Esc closes the page.
 
 ## Layout

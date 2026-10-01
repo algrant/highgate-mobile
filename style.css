@@ -147,13 +147,6 @@ sup.star { color: #c0392b; font-weight: 700; }
   .pat-side { order: 2; position: sticky; top: 73px; max-height: calc(100vh - 89px); overflow-y: auto; }
   .pat-main { order: 1; }
   .pat-side .mv-stage { aspect-ratio: 1; }
-  /* redrawn and the book's drawing together: frames and maps side by side, long causal diagrams one above the other */
-  figure.draw.has-both .tog { display: none; }
-  figure.draw.has-both .v-ours, figure.draw.has-both .v-orig, figure.draw.has-both.show-orig .v-ours { display: block; }
-  figure.draw.has-both.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  figure.draw.has-both.pair figcaption { grid-column: 1 / -1; }
-  figure.draw.has-both.stack .v-orig { margin-top: 8px; }
-  figure.draw.has-both .vlab { display: block; font-size: 11px; color: var(--mute); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 3px; }
   .keys { display: block; }
 }
 .topss .parts { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin-top: 4px; }
