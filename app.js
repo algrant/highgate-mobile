@@ -29,7 +29,7 @@ function passes(p) {
 }
 function row(p) {
   const meta = [p.j ? `${p.j}p` : "", p.o ? `${p.o} clubs` : "", p.label ? `p${p.label}` : ""].filter(Boolean).join(" · ");
-  return `<li><a href="#/p/${esc(p.id)}"><span class="nm">${esc(p.name)}</span>${p.m ? '<span class="badge mv">moving</span>' : ""}${p.k !== "pattern" ? `<span class="badge">${esc(p.k)}</span>` : ""}<span class="meta">${esc(meta)}</span></a></li>`;
+  return `<li><a href="#/p/${esc(p.id)}"><span class="nm">${esc(p.name)}</span>${p.m ? '<span class="badge mv">moving</span>' : p.a ? '<span class="badge">animated</span>' : ""}${p.k !== "pattern" ? `<span class="badge">${esc(p.k)}</span>` : ""}<span class="meta">${esc(meta)}</span></a></li>`;
 }
 function filterBar() {
   const c = (on, lab, act) => `<button class="chip${on ? " on" : ""}" data-act="${act}">${lab}</button>`;
@@ -56,7 +56,7 @@ async function home() {
   } else {
     html += `<a class="bookcard" href="#/p/front"><b>${esc(INDEX.meta.title)}</b><span>by ${esc(INDEX.meta.author)} · the book's introduction and dedication →</span></a>`;
     html += INDEX.chapters.map((c, i) => `<details class="chap"${i === 0 ? "" : ""}><summary><span>${esc(c.title)}</span><span class="n">${c.patterns.length}</span></summary><ul class="pats">${c.patterns.map(row).join("")}</ul></details>`).join("");
-    html += `<p class="cap">Every pattern of ${esc(INDEX.meta.title)} by ${esc(INDEX.meta.author)}, in the book's words and order, with its drawings (redrawn, and the originals) and ${INDEX.meta.moving} walking patterns animated. <a href="${esc(INDEX.meta.pdf)}" target="_blank" rel="noopener">The book's PDF ↗</a> (a copy of <a href="${esc(INDEX.meta.pdf_original || INDEX.meta.pdf)}" target="_blank" rel="noopener">the original</a>)</p>`;
+    html += `<p class="cap">Every pattern of ${esc(INDEX.meta.title)} by ${esc(INDEX.meta.author)}, in the book's words and order, with its drawings (redrawn, and the originals), ${INDEX.meta.moving} walking patterns animated and ${(INDEX.meta.animated || 0) - INDEX.meta.moving} standing ones. <a href="${esc(INDEX.meta.pdf)}" target="_blank" rel="noopener">The book's PDF ↗</a> (a copy of <a href="${esc(INDEX.meta.pdf_original || INDEX.meta.pdf)}" target="_blank" rel="noopener">the original</a>)</p>`;
   }
   $("#main").innerHTML = html;
   wireFilters(home);
@@ -156,7 +156,10 @@ async function pattern(id) {
   const src = `From <i>${esc(INDEX.meta.title)}</i> by ${esc(INDEX.meta.author)}${p.label ? `, page ${esc(p.label)}` : ""}`;
   let side = `${topSiteswap(p)}
     ${p.passist || p.passist_fork || notesOn() ? `<div class="links">${p.passist ? `<a class="btn" href="${esc(p.passist)}" target="_blank" rel="noopener">Animate on passist${p.passist.includes("//alpha.") ? " (beta)" : ""} ↗</a>` : ""}${p.passist_fork ? `<a class="btn" href="${esc(p.passist_fork.url)}" target="_blank" rel="noopener">${p.passist_fork.kind === "feed" ? "Feed" : p.passist_fork.kind === "sync" ? "Sync" : "Layers"} on pass.algrant.ca ↗</a>` : ""}${noteButtonHtml()}</div>${p.passist_fork && p.passist_fork.kind === "feed" && p.passist_fork.names[0] !== "A" ? `<div class="cap">On pass.algrant.ca the feeder is juggler A (here ${esc(({A: "Anne", B: "Ben", C: "Clare"})[p.passist_fork.names[0]] || p.passist_fork.names[0])}).</div>` : ""}` : ""}`;
-  if (models.length) side += `<div class="card"><h2>Walking (our model)</h2>${models.length > 1 ? `<div class="tabs">${models.map((x, i) => `<button class="chip${i === 0 ? " on" : ""}" data-m="${i}">${esc(x.lab)}</button>`).join("")}</div>` : ""}<div id="player"></div><div class="cap">Modelled from the book's position frames and causal diagram; tap ▶ to play.</div></div>`;
+  const standing = models.length && models.every(x => x.m.static);
+  if (models.length) side += `<div class="card"><h2>${standing ? "Passing (our model)" : "Walking (our model)"}</h2>${models.length > 1 ? `<div class="tabs">${models.map((x, i) => `<button class="chip${i === 0 ? " on" : ""}" data-m="${i}">${esc(x.lab)}</button>`).join("")}</div>` : ""}<div id="player"></div><div class="cap">${standing
+    ? "Everyone where the book's dots beside the causal diagram put them, the passes from the causal diagram; tap ▶ to play."
+    : "Modelled from the book's position frames and causal diagram; tap ▶ to play."}</div></div>`;
   let main = `<article class="text">${bodyHtml(p) || (p.drawings || []).map(drawingHtml).join("")}${(p.errata || []).length ? `<div class="errata"><h3>Corrections</h3>${p.errata.map(n => `<p><sup class="star">*</sup> ${esc(n)}</p>`).join("")}</div>` : ""}</article>`;
   // (what we derived: beside the words on a wide screen, after them on a phone)
   const derCard = der && (sy || !(p.body || []).some(c => c.t === "l" && (c.h || "").includes(p.derived.value)))

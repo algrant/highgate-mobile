@@ -5,7 +5,7 @@ words, in its order, chapter by chapter, with its drawings. The site:
 - **Browsing:** by chapter, with search and filters (walking patterns, siteswaps, number of jugglers).
 - **Drawings:** each pattern's causal diagrams and position frames, redrawn, and each one switchable to the
   book's own drawing.
-- **Walking:** 44 walking patterns animated.
+- **Animations:** 44 walking patterns, and 264 standing ones (everyone where the book's position dots put them, the passes from the causal diagram).
 - **Links:** each pattern links to its page in the book's PDF, and to [passist.org](https://passist.org) where a
   global siteswap is known, else to its beta [alpha.passist.org](https://alpha.passist.org) as a symmetric or
   extended siteswap (only links passist checks as valid, via `extract/passist_check.py`).
