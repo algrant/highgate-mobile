@@ -74,3 +74,21 @@ main, .card, .pat { min-width: 0; max-width: 100%; }
 .mv-stage svg { max-width: 100%; }
 .pager a { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .links .btn, .card .btn { max-width: 100%; }
+
+/* the book's words */
+.source { font-size: 13px; color: var(--mute); margin: 2px 0 10px; }
+article.text { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 4px 14px 10px; margin-bottom: 12px; }
+article.text p { margin: 10px 0; }
+article.text p.lab { margin: 4px 0; padding-left: 10px; border-left: 3px solid var(--line); }
+article.text h3 { font-size: 16px; margin: 14px 0 6px; }
+article.text ul { padding-left: 20px; margin: 8px 0; }
+article.text hr { border: 0; border-top: 1px solid var(--line); margin: 12px 0; }
+figure.draw { margin: 12px 0; }
+figure.draw .tog { display: flex; gap: 6px; margin-bottom: 6px; }
+figure.draw .tog .chip { font-size: 12px; padding: 3px 9px; }
+figure.draw .v-orig { display: none; }
+figure.draw.show-orig .v-orig { display: block; }
+figure.draw.show-orig .v-ours { display: none; }
+.paper.orig img { display: block; width: 100%; height: auto; }
+.bookcard { display: block; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; text-decoration: none; color: var(--ink); }
+.bookcard span { display: block; color: var(--mute); font-size: 13px; }
