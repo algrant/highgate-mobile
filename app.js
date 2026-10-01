@@ -111,7 +111,8 @@ function topSiteswap(p) {
   const d = p.derived;
   let lab, val, how;
   if (st) { lab = NAME[st.type]; val = st.value; how = "the book's"; }
-  else if (d && d.sync) { lab = "sync siteswap"; val = Object.entries(d.sync.per_juggler).map(([j, v]) => `${j}: ${v}`).join("  ·  "); how = "from the drawing"; }
+  else if (d && d.sync && d.sync.prechac) { lab = "synchronous, préchac numbers"; val = Object.entries(d.sync.prechac).map(([j, v]) => `${j}: ${v}`).join("  ·  "); how = "from the drawing"; }
+  else if (d && d.sync && d.sync.per_juggler) { lab = "sync siteswap"; val = Object.entries(d.sync.per_juggler).map(([j, v]) => `${j}: ${v}`).join("  ·  "); how = "from the drawing"; }
   else if (d && (d.global || d.value)) {
     const k = d.kind || "";
     lab = d.global && /global|local/.test(k) ? "siteswap" : /prechac/.test(k) ? "préchac" : "siteswap";
@@ -202,8 +203,10 @@ async function pattern(id) {
   const meta = [p.chapter, p.label ? `book page ${p.label}` : "", jLabel(p.jugglers), p.objects ? `${p.objects} clubs` : "", p.timing || ""].filter(Boolean).join(" · ");
   const notes = (p.notations || []).map(n => `<dt>${esc({"hg-siteswap": "siteswap", "prechac": "préchac", "hg-siteswap-in-title": "siteswap (title)", "hg-siteswap-in-text": "siteswap (text)"}[n.type] || n.type)}</dt><dd>${esc(n.value)}</dd>`).join("");
   const sy = p.derived && p.derived.sync;
-  const syncHtml = sy ? `<dt>synchronous, every beat both hands (idle hand holds a 2)</dt>${Object.entries(sy.per_juggler).map(([j, v]) => `<dd>${esc(j)}: ${esc(v)}</dd>`).join("")}` +
-    (sy.drawn ? `<dt>as drawn (the drawing throws something once, e.g. a trick)</dt>${Object.entries(sy.drawn).map(([j, v]) => `<dd>${esc(j)}: ${esc(v)}</dd>`).join("")}` : "") : "";
+  const dl = (title, o) => o ? `<dt>${title}</dt>${Object.entries(o).map(([j, v]) => `<dd>${esc(j)}: ${esc(v)}</dd>`).join("")}` : "";
+  const syncHtml = sy ? dl("synchronous, préchac numbers (beats from throw to throw)", sy.prechac) +
+    dl("synchronous siteswap, exact timing: every beat both hands, the idle hand holding a 2", sy.per_juggler) +
+    dl("as drawn, the whole drawing (a transition, or a trick thrown once)", sy.drawn) : "";
   const der = (p.derived && p.derived.value && !(p.notations || []).some(n => n.value === p.derived.value)
     ? `<dt>derived from the drawing (${esc(p.derived.kind || "")}${p.derived.confidence ? ", " + esc(p.derived.confidence) + " confidence" : ""})</dt><dd>${esc(p.derived.value)}</dd>` : "") + syncHtml;
   const src = `From <i>${esc(INDEX.meta.title)}</i> by ${esc(INDEX.meta.author)}${p.label ? `, page ${esc(p.label)}` : ""}`;
