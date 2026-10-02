@@ -219,7 +219,7 @@ function bodyHtml(p) {
       let j = i, words = "";
       while (j < body.length && body[j].t === "l" && PATLINE.test(plain(body[j].h))) { words += `<p class="lab">${body[j].h}</p>`; j++; }
       out += `<div class="pt${TABLE ? "" : " show-words"}"><div class="tog"><button class="chip${TABLE ? " on" : ""}" data-v="table">Table</button><button class="chip${TABLE ? "" : " on"}" data-v="words">The book's words</button></div>` +
-             `<div class="pt-table">${tableHtml(p.table)}${(p.table.stages || []).length ? `<div class="cap">Read from the book's words: passes coloured by who catches them, ✕ crossing, ² double, ↩ drop-back, dotted: hurried, 5, 6 … selfs by their siteswap number${p.table.sync ? ", each juggler's left hand over their right" : ""}.</div>` : ""}</div><div class="pt-words">${words}</div></div>`;
+             `<div class="pt-table">${tableHtml(p.table)}${(p.table.stages || []).length ? `<div class="cap">Read from the book's words: passes coloured by who catches them, ✕ crossing, ² double, ↩ drop-back, underlined: hurried, 5, 6 … selfs by their siteswap number${p.table.sync ? ", each juggler's left hand over their right" : ""}.</div>` : ""}</div><div class="pt-words">${words}</div></div>`;
       tabled = true;
       i = j - 1;
       continue;

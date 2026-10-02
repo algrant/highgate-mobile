@@ -170,7 +170,7 @@ sup.star { color: #c0392b; font-weight: 700; }
 .pt-c { flex: 0 0 var(--col); width: var(--col); box-sizing: border-box; text-align: center; font-size: 12.5px; padding: 3px 0; margin-right: 2px; border-radius: 5px; }
 .pt-c.s { color: var(--mute); background: var(--bg); }
 .pt-c.p { color: #fff; font-weight: 600; background: #888; }
-.pt-c.h { text-decoration: underline dotted; text-underline-offset: 3px; }
+.pt-c.h { text-decoration: underline; text-underline-offset: 3px; }
 .pt-c.to-A, .pt-who.j-A { --c: #d9534f; } .pt-c.to-B, .pt-who.j-B { --c: #2a7ab9; }
 .pt-c.to-C, .pt-who.j-C { --c: #3c9a3c; } .pt-c.to-D, .pt-who.j-D { --c: #c77c11; }
 .pt-c.p[class*="to-"] { background: var(--c); }
