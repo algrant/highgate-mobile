@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>Pattern sheet</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  @page { size: A4; margin: 12mm; }
+  :root { --bg: #fff; --card: #fff; --ink: #1c1f23; --mute: #5b6472; --line: #d9dde3; --accent: #1f5f8b; --chip: #eef3f8; }
+  html, body { background: #fff !important; color: #1c1f23; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .orig { font-size: 9pt; color: #5b6472; margin-top: 2px; }
+  .orig a { color: #1f5f8b; }
+  body { font: 11pt/1.4 -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; }
+  #main, header#top, #nav { display: none !important; }
+  .sheet { max-width: 186mm; margin: 0 auto; }
+  .sheet h1 { font-size: 20pt; margin: 0 0 2px; }
+  .meta { color: #5b6472; font-size: 10pt; }
+  .ss { margin: 6px 0 10px; font-size: 10pt; }
+  .ss code { font-family: ui-monospace, Menlo, monospace; background: #eef3f8; padding: 1px 5px; border-radius: 4px; margin-right: 6px; }
+  h2 { font-size: 10pt; text-transform: uppercase; letter-spacing: .05em; color: #5b6472; margin: 14px 0 6px; border-bottom: 1px solid #d9dde3; padding-bottom: 2px; }
+  .stills { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .still { border: 1px solid #d9dde3; border-radius: 6px; padding: 2px; break-inside: avoid; }
+  .still .lab { font-size: 8pt; color: #5b6472; text-align: center; }
+  .still .mv-ctl { display: none !important; }
+  .still .mv-stage { border: 0; aspect-ratio: 1; }
+  .figs figure.draw { margin: 6px 0 10px; break-inside: avoid; }
+  .figs .tog, .figs .v-orig { display: none !important; }
+  .figs .v-ours { display: block !important; }
+  .figs .paper.wide svg { min-width: 0 !important; width: 100%; max-height: 60mm; }
+  .pt .tog, .pt .pt-words { display: none !important; }
+  .pt .pt-table { display: block !important; overflow: visible; }
+  .pt-c { font-size: 8.5pt; }
+  .pt-grid { --col: 3.1em; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .tips { background: #fbf7ea; border: 1px solid #ecdfb0; border-radius: 8px; padding: 8px 12px; font-size: 10pt; break-inside: avoid; }
+  .tips .lab { font-size: 8.5pt; color: #8a6d1d; text-transform: uppercase; letter-spacing: .04em; }
+  .tips ul { margin: 4px 0 0; padding-left: 18px; }
+  .stars { color: #c99a14; letter-spacing: 2px; }
+  .foot { margin-top: 14px; font-size: 8.5pt; color: #5b6472; border-top: 1px solid #d9dde3; padding-top: 4px; }
+</style>
+</head>
+<body>
+<div id="main"></div><input id="q" type="hidden"><div id="nav"></div>
+<div class="sheet" id="sheet"></div>
+<script src="lib/events.js"></script>
+<script src="lib/moving.js"></script>
+<script src="notes.js"></script>
+<script src="app.js"></script>
+<script>
+// one printable sheet per pattern (sheet.html#<pattern id>, then print): the site's own drawings, stills from its animation, the start and the table; and
+// some made-up practice notes (clearly ours, not the book's)
+const EXTRA = {
+  "four-person-two-count-rick-s-picnic": {stars: 4, tips: [
+    "Learn it as four three-person conversations first: everyone passes to everyone, so call names out loud.",
+    "Stand in a true square (about two metres a side); a rectangle makes the diagonal passes much longer than the sides.",
+    "The hurried selfs are the hard part: drill the 'pass, hurried self' rhythm solo before joining up.",
+    "Start with everyone on four count, then switch to the two count on a shout."]},
+  "three-person-four-count-drop-back-line": {stars: 3, tips: [
+    "Ben never turns round: practise drop-backs to a partner alone first, aiming over the same shoulder each time.",
+    "Anne stands close behind Ben, a little to his right, so the drop-back falls into her left hand.",
+    "Run it at four count until the drop-backs are boring, then try the same line on three count.",
+    "Clare is the only one facing the line: she can watch everyone and call the start."]},
+  "four-count-drop-back-y": {stars: 3, tips: [
+    "Ben in the middle faces up the Y and catches from Anne; his passes go back over his head to Daniel.",
+    "Daniel stands directly behind Ben: line him up before you start.",
+    "Everyone else is plain four count, so put the steadiest passers at Anne and Clare.",
+    "Once it runs, swap who stands in the middle: the drop-back is the trick to share round."]},
+  "right-handed-bruno-s-nightmare": {stars: 5, tips: [
+    "Walk the figure of eight without clubs first, counting the beats out loud, until everyone arrives on time.",
+    "The walkers pass from the inside spots: keep the figure of eight narrow so the passes stay short.",
+    "All passes are right handed: the left hand only ever throws selfs.",
+    "Expect collisions in the middle: agree who crosses in front before you start."]},
+  "sticky-triangle": {stars: 4, tips: [
+    "Mark the corners and the midpoints of a big triangle with juggling balls on the floor.",
+    "At a corner you pass to a corner, at a midpoint to a midpoint: say 'corner' or 'middle' as you pass.",
+    "The walking rule: corner, midpoint, midpoint, corner. Walk it slowly with no clubs first.",
+    "Keep the triangle big: the walkers cross in front of each other at the midpoints."]},
+};
+(async () => {
+  const id = location.hash.slice(1);
+  await loadIndex();
+  const p = await loadPattern(id);
+  const m = (p.moving || [])[0];
+  const x = EXTRA[id] || {stars: 0, tips: []};
+  const origUrl = `${INDEX.meta.pdf_original || "https://www.jugglingedge.com/pdf/highgate.pdf"}${p.page ? "#page=" + p.page : ""}`;
+  const ssv = topSiteswap(p).replace(/<div class="topss">/, "").replace(/<\/div>$/, "");
+  const cycle = m ? m.cycle : 0;
+  const n = 8;
+  const beats = m ? Array.from({length: n}, (_, k) => Math.round(k * cycle / n * 4) / 4) : [];
+  let h = `<h1>${esc(p.name)}</h1>
+    <div class="meta">${esc(p.chapter)}${p.label ? ` · The New Highgate Collection, page ${esc(p.label)}` : ""}${p.jugglers ? ` · ${p.jugglers} jugglers` : ""}${p.objects ? ` · ${p.objects} clubs` : ""}</div>
+    <div class="orig">Original: <a href="${esc(origUrl)}">${esc(origUrl)}</a></div>
+    <div class="ss">${ssv}</div>
+    <h2>${m && m.static ? "Passing" : "Walking"}: one cycle in ${n} stills (our model)</h2>
+    <div class="stills">${beats.map((b, k) => `<div class="still" id="s${k}"><div class="lab">beat ${b}</div></div>`).join("")}</div>
+    ${p.table && (p.table.stages || p.table.start) ? `<h2>Start and pattern (from the book's words)</h2><div class="pt">${tableHtml(p.table)}<div class="cap">Passes coloured by who catches them (Anne red, Ben blue, Clare green, Daniel orange), ✕ crossing, underlined: hurried.</div></div>` : ""}
+    ${x.tips.length ? `<div class="cols"><div><h2>Difficulty (our guess)</h2><div class="stars">${"★".repeat(x.stars)}${"☆".repeat(5 - x.stars)}</div></div>
+    <div><h2>Practice notes</h2><div class="tips"><div class="lab">Our suggestions, not the book's</div><ul>${x.tips.map(t => `<li>${esc(t)}</li>`).join("")}</ul></div></div></div>` : ""}
+    <h2>Drawings, redrawn from the book</h2><div class="figs">${(p.drawings || []).map(drawingHtml).join("")}</div>
+    <div class="foot">From <i>The New Highgate Collection</i> by Aidan Burns (CC BY-NC-SA), page ${esc(p.label || "")}: <a href="${esc(origUrl)}">${esc(origUrl)}</a>. Animation stills, tables and drawings: our models of the book's diagrams and words (https://algrant.github.io/highgate-mobile/#/p/${esc(id)}). Practice notes and difficulty are our own.</div>`;
+  const sheet = document.getElementById("sheet");
+  sheet.innerHTML = h;
+  document.querySelectorAll(".figs .drawbox").forEach(box => fitKids(box, p.drawings[+box.dataset.d]));
+  beats.forEach((b, k) => { const el = document.getElementById("s" + k); const d = document.createElement("div"); el.appendChild(d); const pl = mvPlayer(d, m); pl.stop(); pl.seek(b); });
+  document.title = p.name;
+})();
+</script>
+</body>
+</html>

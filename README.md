@@ -19,6 +19,11 @@ terms: non-commercial, with attribution, share-alike.
 
 Site: https://algrant.github.io/highgate-mobile/
 
+## Printable sheets
+
+`sheet.html#<pattern id>` lays a pattern out for printing (A4): stills from its animation, its start and pattern
+table, its redrawn drawings, and the original PDF's full address.
+
 ## Pattern tables
 
 Each pattern's "Pattern for ..." lines (and the walking patterns' stages) show as a table read from the book's

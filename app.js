@@ -135,6 +135,8 @@ function topSiteswap(p) {
     ? `<div class="topss"><span class="lab">${esc(lab)}</span> <span class="how">${esc(how)}</span><div class="parts">${parts.map(x => `<code>${esc(x)}</code>`).join("")}</div></div>`
     : `<div class="topss"><span class="lab">${esc(lab)}</span> <code>${esc(val)}</code> <span class="how">${esc(how)}</span></div>`;
 }
+// the original PDF's full web address at the pattern's page (the site's links open our copy)
+const origOf = p => `${(INDEX.meta && INDEX.meta.pdf_original) || "https://www.jugglingedge.com/pdf/highgate.pdf"}${p.page ? "#page=" + p.page : ""}`;
 // the book's words, block by block, the drawings in place
 // the "Pattern for ..." lines as a table: a row per juggler, a column per beat, the passes coloured by who catches
 // them (the animation's colours); the book's lines a tap away
@@ -269,7 +271,8 @@ async function pattern(id) {
   // (one column on a phone, the panel first; on a wide screen the panel -- siteswap, links, walking -- stays in view
   // beside the book's words)
   $("#main").innerHTML = `<div class="pat"><div class="pat-head"><h1>${esc(p.name)}</h1><div class="sub">${esc(meta)}</div>
-    <div class="source">${src} · <a href="${esc(p.pdf || INDEX.meta.pdf)}" target="_blank" rel="noopener" class="pdflink">view the original page ↗</a></div></div>
+    <div class="source">${src} · <a href="${esc(p.pdf || INDEX.meta.pdf)}" target="_blank" rel="noopener" class="pdflink">view the original page ↗</a>
+    <div class="origurl">Original: <a href="${esc(origOf(p))}" target="_blank" rel="noopener">${esc(origOf(p))}</a></div></div></div>
     <div class="pat-cols"><div class="pat-side">${side}</div><div class="pat-main">${main}</div></div></div>`;
   renderNav(id);
   const pl = document.querySelector(".pdflink");
