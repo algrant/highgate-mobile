@@ -356,7 +356,12 @@ async function route() {
   if (player) { player.stop(); player = null; }
   const h = location.hash.replace(/^#/, "");
   try {
-    if (h.startsWith("/p/")) return await pattern(decodeURIComponent(h.slice(3)));
+    if (h.startsWith("/p/")) {
+      await loadIndex();
+      const id = decodeURIComponent(h.slice(3)), to = (INDEX.redirects || {})[id];
+      if (to) { location.replace("#/p/" + to); return; }      // (a page that moved: a corrected name, a merge)
+      return await pattern(id);
+    }
     if (h === "/about") return await about();
     if (h === "/notes") return await notesPage();
     await home();
