@@ -285,6 +285,9 @@ async function pattern(id) {
   wireToggles();
   wireTables();
   wireNote(p);
+  // (for funky-book's accounts: stars, notes, practice log on this pattern)
+  window.__bookPattern = {pid: p.pid, id: p.id, name: p.name, book: "highgate"};
+  document.dispatchEvent(new CustomEvent("book:pattern", {detail: window.__bookPattern}));
   if (models.length) {
     const start = i => { if (player) player.stop(); player = mvPlayer($("#player"), models[i].m); };
     start(0);
