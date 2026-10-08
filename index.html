@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#1f5f8b">
 <title>Highgate Passing Patterns</title>
 <meta name="description" content="The New Highgate Collection of club passing patterns, to browse on a phone: causal diagrams, position frames and animated walking patterns.">
-<link rel="stylesheet" href="style.css?v=ba285c0368">
+<link rel="stylesheet" href="style.css?v=bb68ef1105">
 </head>
 <body>
 <header id="top">
@@ -15,19 +15,19 @@
   <a href="#/about" class="about" aria-label="About">?</a>
 </header>
 <div id="shell"><aside id="nav" aria-label="Chapters"></aside><main id="main"><p class="loading">Loading…</p></main></div>
-<script src="lib/events.js?v=ba285c0368"></script>
-<script src="lib/moving.js?v=ba285c0368"></script>
+<script src="lib/events.js?v=bb68ef1105"></script>
+<script src="lib/moving.js?v=bb68ef1105"></script>
 <script>
 // inside funky-book: the link home, and its accounts (stars, notes, practice log)
 if (/\/books\/[^/]+\/([^/]*\.html)?$/.test(location.pathname)) {
   document.querySelector(".brand.home").hidden = false;
-  for (const src of ["https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2", "../../account/config.js", "../../account/account.js"]) {
+  for (const src of ["https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2", "../../account/config.js", "../../account/account.js", "../../account/reviews.js"]) {
     const sc = document.createElement("script"); sc.src = src; sc.async = false; document.head.appendChild(sc);
   }
   const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "../../account/account.css"; document.head.appendChild(css);
 }
 </script>
-<script src="notes.js?v=ba285c0368"></script>
-<script src="app.js?v=ba285c0368"></script>
+<script src="notes.js?v=bb68ef1105"></script>
+<script src="app.js?v=bb68ef1105"></script>
 </body>
 </html>

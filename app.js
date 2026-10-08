@@ -99,7 +99,7 @@ function drawingHtml(d, i) {
   const showOrig = !ours || ORIG;
   const tog = ours && orig ? `<div class="tog"><button class="chip${showOrig ? "" : " on"}" data-v="ours">Redrawn</button><button class="chip${showOrig ? " on" : ""}" data-v="orig">Original</button></div>` : "";
   const both = ours && orig ? ` has-both ${d.kind === "causal diagram" ? "stack" : "pair"}` : "";
-  return `<figure class="draw${showOrig ? " show-orig" : ""}${both}">${tog}<div class="v-ours"><div class="vlab">Redrawn</div>${ours}</div><div class="v-orig"><div class="vlab">The book's drawing</div>${orig}</div><figcaption class="cap">${esc(d.kind === "drawing" ? "the book's drawing" : d.kind)} · ${esc(d.file)}${d.star ? ` · corrected<sup class="star">*</sup>` : ""}</figcaption></figure>`;
+  return `<figure class="draw${showOrig ? " show-orig" : ""}${both}" data-file="${esc(d.file)}">${tog}<div class="v-ours"><div class="vlab">Redrawn</div>${ours}</div><div class="v-orig"><div class="vlab">The book's drawing</div>${orig}</div><figcaption class="cap">${esc(d.kind === "drawing" ? "the book's drawing" : d.kind)} · ${esc(d.file)}${d.star ? ` · corrected<sup class="star">*</sup>` : ""}</figcaption></figure>`;
 }
 let ORIG = (() => { try { return localStorage.getItem("hg-orig") === "1"; } catch (e) { return false; } })();
 function wireToggles() {
@@ -286,7 +286,7 @@ async function pattern(id) {
   wireTables();
   wireNote(p);
   // (for funky-book's accounts: stars, notes, practice log on this pattern)
-  window.__bookPattern = {pid: p.pid, id: p.id, name: p.name, book: "highgate"};
+  window.__bookPattern = {pid: p.pid, id: p.id, name: p.name, book: "highgate", data: p};
   document.dispatchEvent(new CustomEvent("book:pattern", {detail: window.__bookPattern}));
   if (models.length) {
     const start = i => { if (player) player.stop(); player = mvPlayer($("#player"), models[i].m); };
