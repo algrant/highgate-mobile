@@ -121,6 +121,7 @@ function topSiteswap(p) {
   const d = p.derived;
   let lab, val, how;
   if (st) { lab = NAME[st.type]; val = st.value; how = "the book's"; }
+  else if (d && d.polyrhythm) { lab = `polyrhythm ${d.polyrhythm.ratio}`; val = d.polyrhythm.notation; how = "from the drawing, in the fastest juggler's beats"; }
   else if (d && d.sync && d.sync.prechac) { lab = "synchronous, préchac numbers"; val = Object.entries(d.sync.prechac).map(([j, v]) => `${j}: ${v}`).join("  ·  "); how = "from the drawing"; }
   else if (d && d.sync && d.sync.per_juggler) { lab = "sync siteswap"; val = Object.entries(d.sync.per_juggler).map(([j, v]) => `${j}: ${v}`).join("  ·  "); how = "from the drawing"; }
   else if (d && (d.global || d.value)) {
@@ -248,10 +249,12 @@ async function pattern(id) {
   const notes = (p.notations || []).map(n => `<dt>${esc({"hg-siteswap": "siteswap", "prechac": "préchac", "hg-siteswap-in-title": "siteswap (title)", "hg-siteswap-in-text": "siteswap (text)"}[n.type] || n.type)}</dt><dd>${esc(n.value)}</dd>`).join("");
   const sy = p.derived && p.derived.sync;
   const dl = (title, o) => o ? `<dt>${title}</dt>${Object.entries(o).map(([j, v]) => `<dd>${esc(j)}: ${esc(v)}</dd>`).join("")}` : "";
+  const po = p.derived && p.derived.polyrhythm;
+  const polyHtml = po ? `<dt>jugglers at different tempos (${esc(po.ratio)}): each one's throws in the fastest juggler's beats, after Don Kuehleon's polyrhythmic siteswap proposal; x a crossing pass</dt>${Object.entries(po.per_juggler).map(([j, v]) => `<dd>${esc(j)} (a throw every ${esc(String(Math.round(po.tempos[j] * 100) / 100))} beats): ${esc(v.join(" "))}</dd>`).join("")}<dd class="mute">${po.clubs} clubs over a ${po.cycle}-beat cycle</dd>` : "";
   const syncHtml = sy ? dl("synchronous, préchac numbers (beats from throw to throw)", sy.prechac) +
     dl("synchronous siteswap, exact timing: every beat both hands, the idle hand holding a 2", sy.per_juggler) +
     dl("as drawn, the whole drawing (a transition, or a trick thrown once)", sy.drawn) : "";
-  const der = (p.derived && p.derived.value && !(p.notations || []).some(n => n.value === p.derived.value)
+  const der = polyHtml + (p.derived && p.derived.value && !(p.notations || []).some(n => n.value === p.derived.value)
     ? `<dt>derived from the drawing (${esc(p.derived.kind || "")}${p.derived.confidence ? ", " + esc(p.derived.confidence) + " confidence" : ""})</dt><dd>${esc(p.derived.value)}</dd>` : "") + syncHtml;
   const src = `From <i>${esc(INDEX.meta.title)}</i> by ${esc(INDEX.meta.author)}${p.label ? `, page ${esc(p.label)}` : ""}`;
   let side = `${topSiteswap(p)}
@@ -262,7 +265,7 @@ async function pattern(id) {
     : "Modelled from the book's position frames and causal diagram; tap ▶ to play."}</div></div>`;
   let main = `<article class="text">${bodyHtml(p) || (p.drawings || []).map(drawingHtml).join("")}${(p.errata || []).length ? `<div class="errata"><h3>Corrections</h3>${p.errata.map(n => `<p><sup class="star">*</sup> ${esc(n)}</p>`).join("")}</div>` : ""}</article>`;
   // (what we derived: beside the words on a wide screen, after them on a phone)
-  const derCard = der && (sy || !(p.body || []).some(c => c.t === "l" && (c.h || "").includes(p.derived.value)))
+  const derCard = der && (sy || po || !(p.body || []).some(c => c.t === "l" && (c.h || "").includes(p.derived.value)))
     ? `<dl class="notes">${der}</dl>` : "";
   if (derCard) side += `<div class="card only-wide"><h2>Derived from the drawing</h2>${derCard}</div>`;
   if (derCard) main += `<div class="card only-narrow"><h2>Derived from the drawing</h2>${derCard}</div>`;

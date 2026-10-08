@@ -6,18 +6,19 @@
 <meta name="theme-color" content="#1f5f8b">
 <title>Highgate Passing Patterns</title>
 <meta name="description" content="The New Highgate Collection of club passing patterns, to browse on a phone: causal diagrams, position frames and animated walking patterns.">
-<link rel="stylesheet" href="style.css?v=fc01b2dd27">
+<link rel="stylesheet" href="style.css?v=1c520ec1f0">
 </head>
 <body>
 <header id="top">
-  <a href="#/" class="brand">Highgate</a>
+  <a href="../../" class="brand home" title="funky-book: all the books" hidden>funky-book</a><a href="#/" class="brand">Highgate</a>
   <input id="q" type="search" placeholder="Search patterns…" autocomplete="off" aria-label="Search patterns">
   <a href="#/about" class="about" aria-label="About">?</a>
 </header>
 <div id="shell"><aside id="nav" aria-label="Chapters"></aside><main id="main"><p class="loading">Loading…</p></main></div>
-<script src="lib/events.js?v=fc01b2dd27"></script>
-<script src="lib/moving.js?v=fc01b2dd27"></script>
-<script src="notes.js?v=fc01b2dd27"></script>
-<script src="app.js?v=fc01b2dd27"></script>
+<script src="lib/events.js?v=1c520ec1f0"></script>
+<script src="lib/moving.js?v=1c520ec1f0"></script>
+<script>if (/\/books\/[^/]+\/?$/.test(location.pathname)) document.querySelector(".brand.home").hidden = false;</script>
+<script src="notes.js?v=1c520ec1f0"></script>
+<script src="app.js?v=1c520ec1f0"></script>
 </body>
 </html>

@@ -211,3 +211,4 @@ sup.star { color: #c0392b; font-weight: 700; }
 .club.c-red { background: #e74c3c; } .club.c-green { background: #27ae60; } .club.c-blue { background: #2e86de; }
 .club.c-yellow { background: #f1c40f; } .club.c-white { background: #fff; border-color: #999; }
 .origurl { font-size: 12px; color: var(--mute); word-break: break-all; margin-top: 2px; }
+.brand.home { color: var(--mute); font-weight: 600; margin-right: -2px; } .brand.home::after { content: " ›"; }
