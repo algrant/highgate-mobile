@@ -74,7 +74,8 @@ async function home() {
 
 function causalHtml(reading) {
   const s = eventsSvg(reading);
-  return s.replace(/<svg([^>]*?)class="[^"]*"/, "<svg$1");
+  // (the viewer's own frame -- a border and a margin below -- would draw a line and a white strip inside the paper)
+  return s.replace(/<svg([^>]*?)class="[^"]*"/, "<svg$1").replace(/margin:0 0 8px;border:1px solid var\(--line\);/, "margin:0;border:0;");
 }
 function fitKids(box, d) {
   box.querySelectorAll(".kid").forEach(div => {
@@ -101,6 +102,15 @@ function drawingHtml(d, i) {
   const both = ours && orig ? ` has-both ${d.kind === "causal diagram" ? "stack" : "pair"}` : "";
   return `<figure class="draw${showOrig ? " show-orig" : ""}${both}" data-file="${esc(d.file)}">${tog}<div class="v-ours"><div class="vlab">Redrawn</div>${ours}</div><div class="v-orig"><div class="vlab">The book's drawing</div>${orig}</div><figcaption class="cap">${esc(d.kind === "drawing" ? "the book's drawing" : d.kind)} · ${esc(d.file)}${d.star ? ` · corrected<sup class="star">*</sup>` : ""}</figcaption></figure>`;
 }
+// our causal diagrams trimmed to their ink, so they sit the size of the book's (measured when shown: a hidden one has no box)
+function trimCausal() {
+  document.querySelectorAll(".paper.wide > svg:not([data-trim])").forEach(svg => {
+    let bb; try { bb = svg.getBBox(); } catch (e) { return; }
+    if (!bb.width || !bb.height) return;
+    svg.setAttribute("viewBox", `${bb.x - 3} ${bb.y - 3} ${bb.width + 6} ${bb.height + 6}`);
+    svg.dataset.trim = "1";
+  });
+}
 let ORIG = (() => { try { return localStorage.getItem("hg-orig") === "1"; } catch (e) { return false; } })();
 function wireToggles() {
   document.querySelectorAll("figure.draw .tog .chip").forEach(b => b.onclick = () => {
@@ -111,6 +121,7 @@ function wireToggles() {
       f.classList.toggle("show-orig", ORIG);
       f.querySelectorAll(".tog .chip").forEach(x => x.classList.toggle("on", (x.dataset.v === "orig") === ORIG));
     });
+    trimCausal();
   });
 }
 // the pattern's siteswap at the top: the book's own (a global siteswap before a préchac), else ours from its drawing
@@ -281,7 +292,7 @@ async function pattern(id) {
   pl.onclick = e => { if (window.innerWidth >= 900) { e.preventDefault(); showPage(p.name, pl.href); } };
   window.scrollTo(0, 0);
   document.querySelectorAll(".drawbox").forEach(box => fitKids(box, p.drawings[+box.dataset.d]));
-  wireToggles();
+  wireToggles(); trimCausal();
   wireTables();
   wireNote(p);
   // (for funky-book's accounts: stars, notes, practice log on this pattern)
@@ -390,3 +401,5 @@ $("#q").addEventListener("input", () => {
 });
 window.addEventListener("hashchange", route);
 route();
+// (a diagram revealed by any tab or toggle gets trimmed once it has a box)
+document.addEventListener("click", () => requestAnimationFrame(trimCausal));
