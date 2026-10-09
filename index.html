@@ -21,10 +21,11 @@
 // inside funky-book: the link home, and its accounts (stars, notes, practice log)
 if (/\/books\/[^/]+\/([^/]*\.html)?$/.test(location.pathname)) {
   document.querySelector(".brand.home").hidden = false;
-  for (const src of ["https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2", "../../account/config.js", "../../account/account.js", "../../account/reviews.js"]) {
+  const v = "?v=" + Math.floor(Date.now() / 36e5);   // (the account files change apart from the book: fresh within the hour)
+  for (const src of ["https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2", "../../account/config.js" + v, "../../account/account.js" + v, "../../account/reviews.js" + v]) {
     const sc = document.createElement("script"); sc.src = src; sc.async = false; document.head.appendChild(sc);
   }
-  const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "../../account/account.css"; document.head.appendChild(css);
+  const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "../../account/account.css" + v; document.head.appendChild(css);
 }
 </script>
 <script src="notes.js?v=f73b0ac447"></script>
