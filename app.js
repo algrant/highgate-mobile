@@ -260,7 +260,7 @@ async function pattern(id) {
   let side = `${topSiteswap(p)}
     ${p.passist || p.passist_fork || notesOn() ? `<div class="links">${p.passist ? `<a class="btn" href="${esc(p.passist)}" target="_blank" rel="noopener">Animate on passist${p.passist.includes("//alpha.") ? " (beta)" : ""} ↗</a>` : ""}${p.passist_fork ? `<a class="btn" href="${esc(p.passist_fork.url)}" target="_blank" rel="noopener">${p.passist_fork.kind === "feed" ? "Feed" : p.passist_fork.kind === "sync" ? "Sync" : "Layers"} on pass.algrant.ca ↗</a>` : ""}${noteButtonHtml()}</div>${p.passist_fork && p.passist_fork.kind === "feed" && p.passist_fork.names[0] !== "A" ? `<div class="cap">On pass.algrant.ca the feeder is juggler A (here ${esc(({A: "Anne", B: "Ben", C: "Clare"})[p.passist_fork.names[0]] || p.passist_fork.names[0])}).</div>` : ""}` : ""}`;
   const standing = models.length && models.every(x => x.m.static);
-  if (models.length) side += `<div class="card"><h2>${standing ? "Passing (our model)" : "Walking (our model)"}</h2>${models.length > 1 ? `<div class="tabs">${models.map((x, i) => `<button class="chip${i === 0 ? " on" : ""}" data-m="${i}">${esc(x.lab)}</button>`).join("")}</div>` : ""}<div id="player"></div><div class="cap">${standing
+  if (models.length) side += `<div class="card mv-card"><h2>${standing ? "Passing (our model)" : "Walking (our model)"}<button class="mv-big-btn" title="Bigger (Esc to close)">⤢</button></h2>${models.length > 1 ? `<div class="tabs">${models.map((x, i) => `<button class="chip${i === 0 ? " on" : ""}" data-m="${i}">${esc(x.lab)}</button>`).join("")}</div>` : ""}<div id="player"></div><div class="cap">${standing
     ? "Everyone where the book's dots beside the causal diagram put them, the passes from the causal diagram; tap ▶ to play."
     : "Modelled from the book's position frames and causal diagram; tap ▶ to play."}</div></div>`;
   let main = `<article class="text">${bodyHtml(p) || (p.drawings || []).map(drawingHtml).join("")}${(p.errata || []).length ? `<div class="errata"><h3>Corrections</h3>${p.errata.map(n => `<p><sup class="star">*</sup> ${esc(n)}</p>`).join("")}</div>` : ""}</article>`;
@@ -288,6 +288,14 @@ async function pattern(id) {
   // (for funky-book's accounts: stars, notes, practice log on this pattern)
   window.__bookPattern = {pid: p.pid, id: p.id, name: p.name, book: "highgate", data: p};
   document.dispatchEvent(new CustomEvent("book:pattern", {detail: window.__bookPattern}));
+  const bigBtn = document.querySelector(".mv-big-btn");
+  if (bigBtn) {
+    // (the animation full size, over the page, and back)
+    const card = bigBtn.closest(".mv-card");
+    const set = on => { card.classList.toggle("mv-full", on); bigBtn.textContent = on ? "✕" : "⤢"; bigBtn.title = on ? "Close (Esc)" : "Bigger (Esc to close)"; };
+    bigBtn.onclick = () => set(!card.classList.contains("mv-full"));
+    document.addEventListener("keydown", e => { if (e.key === "Escape") set(false); });
+  }
   if (models.length) {
     const start = i => { if (player) player.stop(); player = mvPlayer($("#player"), models[i].m); };
     start(0);
