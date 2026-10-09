@@ -257,26 +257,25 @@ async function pattern(id) {
   const der = polyHtml + (p.derived && p.derived.value && !(p.notations || []).some(n => n.value === p.derived.value)
     ? `<dt>derived from the drawing (${esc(p.derived.kind || "")}${p.derived.confidence ? ", " + esc(p.derived.confidence) + " confidence" : ""})</dt><dd>${esc(p.derived.value)}</dd>` : "") + syncHtml;
   const src = `From <i>${esc(INDEX.meta.title)}</i> by ${esc(INDEX.meta.author)}${p.label ? `, page ${esc(p.label)}` : ""}`;
+  // the book's order (user): its words, drawings and tables first, then our animation and readings below
   let side = `${topSiteswap(p)}
     ${p.passist || p.passist_fork || notesOn() ? `<div class="links">${p.passist ? `<a class="btn" href="${esc(p.passist)}" target="_blank" rel="noopener">Animate on passist${p.passist.includes("//alpha.") ? " (beta)" : ""} ↗</a>` : ""}${p.passist_fork ? `<a class="btn" href="${esc(p.passist_fork.url)}" target="_blank" rel="noopener">${p.passist_fork.kind === "feed" ? "Feed" : p.passist_fork.kind === "sync" ? "Sync" : "Layers"} on pass.algrant.ca ↗</a>` : ""}${noteButtonHtml()}</div>${p.passist_fork && p.passist_fork.kind === "feed" && p.passist_fork.names[0] !== "A" ? `<div class="cap">On pass.algrant.ca the feeder is juggler A (here ${esc(({A: "Anne", B: "Ben", C: "Clare"})[p.passist_fork.names[0]] || p.passist_fork.names[0])}).</div>` : ""}` : ""}`;
   const standing = models.length && models.every(x => x.m.static);
-  if (models.length) side += `<div class="card mv-card"><h2>${standing ? "Passing (our model)" : "Walking (our model)"}<button class="mv-big-btn" title="Bigger (Esc to close)">⤢</button></h2>${models.length > 1 ? `<div class="tabs">${models.map((x, i) => `<button class="chip${i === 0 ? " on" : ""}" data-m="${i}">${esc(x.lab)}</button>`).join("")}</div>` : ""}<div id="player"></div><div class="cap">${standing
+  let anim = "";
+  if (models.length) anim += `<div class="card mv-card"><h2>${standing ? "Passing (our model)" : "Walking (our model)"}<button class="mv-big-btn" title="Bigger (Esc to close)">⤢</button></h2>${models.length > 1 ? `<div class="tabs">${models.map((x, i) => `<button class="chip${i === 0 ? " on" : ""}" data-m="${i}">${esc(x.lab)}</button>`).join("")}</div>` : ""}<div id="player"></div><div class="cap">${standing
     ? "Everyone where the book's dots beside the causal diagram put them, the passes from the causal diagram; tap ▶ to play."
     : "Modelled from the book's position frames and causal diagram; tap ▶ to play."}</div></div>`;
   let main = `<article class="text">${bodyHtml(p) || (p.drawings || []).map(drawingHtml).join("")}${(p.errata || []).length ? `<div class="errata"><h3>Corrections</h3>${p.errata.map(n => `<p><sup class="star">*</sup> ${esc(n)}</p>`).join("")}</div>` : ""}</article>`;
-  // (what we derived: beside the words on a wide screen, after them on a phone)
   const derCard = der && (sy || po || !(p.body || []).some(c => c.t === "l" && (c.h || "").includes(p.derived.value)))
     ? `<dl class="notes">${der}</dl>` : "";
-  if (derCard) side += `<div class="card only-wide"><h2>Derived from the drawing</h2>${derCard}</div>`;
-  if (derCard) main += `<div class="card only-narrow"><h2>Derived from the drawing</h2>${derCard}</div>`;
+  main += anim;
+  if (derCard) main += `<div class="card"><h2>Derived from the drawing</h2>${derCard}</div>`;
   if ((p.related || []).length) main += `<div class="card"><h2>Mentioned</h2>${p.related.map(r => `<a class="btn" href="#/p/${esc(r.id)}">${esc(r.name)}</a>`).join(" ")}</div>`;
   main += `<div class="pager">${prev ? `<a class="btn" href="#/p/${esc(prev.id)}" id="prev">← ${esc(prev.name)}</a>` : "<span></span>"}${next ? `<a class="btn" href="#/p/${esc(next.id)}" id="next">${esc(next.name)} →</a>` : "<span></span>"}</div>`;
-  // (one column on a phone, the panel first; on a wide screen the panel -- siteswap, links, walking -- stays in view
-  // beside the book's words)
   $("#main").innerHTML = `<div class="pat"><div class="pat-head"><h1>${esc(p.name)}</h1><div class="sub">${esc(meta)}</div>
     <div class="source">${src} · <a href="${esc(p.pdf || INDEX.meta.pdf)}" target="_blank" rel="noopener" class="pdflink">view the original page ↗</a>
     <div class="origurl">Original: <a href="${esc(origOf(p))}" target="_blank" rel="noopener">${esc(origOf(p))}</a></div></div></div>
-    <div class="pat-cols"><div class="pat-side">${side}</div><div class="pat-main">${main}</div></div></div>`;
+    <div class="pat-side">${side}</div><div class="pat-main">${main}</div></div>`;
   renderNav(id);
   const pl = document.querySelector(".pdflink");
   pl.onclick = e => { if (window.innerWidth >= 900) { e.preventDefault(); showPage(p.name, pl.href); } };

@@ -222,3 +222,5 @@ sup.star { color: #c0392b; font-weight: 700; }
 .mv-card.mv-full { position: fixed; inset: 3vh 3vw; z-index: 40; overflow: auto; box-shadow: 0 10px 40px rgba(0,0,0,.45); display: flex; flex-direction: column; }
 .mv-card.mv-full .mv-stage { max-width: min(82vh, 92vw) !important; width: min(82vh, 92vw); margin: 0 auto; }
 .mv-card.mv-full .mv-ctl { max-width: min(82vh, 92vw) !important; margin: 8px auto 0; }
+/* one column at every width, in the book's order (the side panel retired) */
+@media (min-width: 1200px) { main { max-width: 980px; } .pat-cols { display: block; } .pat-side { position: static; max-height: none; overflow: visible; } .mv-stage, .mv-ctl, .pat-side .mv-stage, .pat-side .mv-ctl { max-width: 380px; } }
