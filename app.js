@@ -6,7 +6,7 @@
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
 let INDEX = null, FLAT = [], player = null;
-const filters = {moving: false, j: null, ss: false, x: null};
+const filters = {moving: false, j: null, ss: false, x: null, o: null};
 const cache = {};
 
 // the version this page was loaded with (index.html names it on app.js); a newer site reloads the page once, so a
@@ -35,6 +35,7 @@ const jLabel = j => j ? `${j} jugglers` : "";
 const extra = p => p.o && p.j ? Math.max(-2, Math.min(3, p.o - 3 * p.j)) : null;
 function passes(p) {
   if (filters.x !== null && filters.x !== undefined && extra(p) !== filters.x) return false;
+  if (filters.o && p.o !== filters.o) return false;
   if (filters.moving && !p.m) return false;
   if (filters.j === 7 ? !(p.j >= 7) : filters.j && p.j !== filters.j) return false;
   return true;
@@ -50,7 +51,9 @@ function filterBar() {
   // (one row for the juggler count, as the other books: pick one, 7+ takes the rest)
   const js = `<div class="seg" role="radiogroup" aria-label="Jugglers"><span class="seg-l">Jugglers</span>${[["", "All"], ...jOpts(FLAT)].map(([v, l]) => `<button role="radio" aria-checked="${String(filters.j ?? "") === String(v)}" class="${String(filters.j ?? "") === String(v) ? "on" : ""}" data-act="j${v}">${l}</button>`).join("")}</div>`;
   const xs = new Set(FLAT.map(extra).filter(x => x !== null));
-  const xb = `<div class="seg" role="radiogroup" aria-label="Clubs vs 3 each"><span class="seg-l">Clubs vs 3 each</span>${[["", "All"], ...[-2, -1, 0, 1, 2, 3].filter(x => xs.has(x)).map(x => [x, x === -2 ? "≤−2" : x === 3 ? "+3+" : x > 0 ? "+" + x : x < 0 ? "−" + -x : "0"])].map(([v, l]) => `<button role="radio" aria-checked="${String(filters.x ?? "") === String(v)}" class="${String(filters.x ?? "") === String(v) ? "on" : ""}" data-act="x${v}">${l}</button>`).join("")}</div>`;
+  const os = filters.j ? [...new Set(FLAT.filter(p => p.j === filters.j && (!filters.moving || p.m)).map(p => p.o).filter(Boolean))].sort((a, b) => a - b) : [];
+  const xb = filters.j ? `<div class="seg" role="radiogroup" aria-label="Clubs"><span class="seg-l">Clubs</span>${[["", "All"], ...os.map(o => [o, String(o)])].map(([v, l]) => `<button role="radio" aria-checked="${String(filters.o ?? "") === String(v)}" class="${String(filters.o ?? "") === String(v) ? "on" : ""}" data-act="o${v}">${l}</button>`).join("")}</div>`
+    : `<div class="seg" role="radiogroup" aria-label="Clubs vs 3 each"><span class="seg-l">Clubs vs 3 each</span>${[["", "All"], ...[-2, -1, 0, 1, 2, 3].filter(x => xs.has(x)).map(x => [x, x === -2 ? "≤−2" : x === 3 ? "+3+" : x > 0 ? "+" + x : x < 0 ? "−" + -x : "0"])].map(([v, l]) => `<button role="radio" aria-checked="${String(filters.x ?? "") === String(v)}" class="${String(filters.x ?? "") === String(v) ? "on" : ""}" data-act="x${v}">${l}</button>`).join("")}</div>`;
   return `<div class="filters">${c(filters.moving, "Moving", "moving")}${js}${xb}</div>`;
 }
 function wireFilters(redraw) {
@@ -59,7 +62,8 @@ function wireFilters(redraw) {
     if (a === "moving") filters.moving = !filters.moving;
     else if (a === "ss") filters.ss = !filters.ss;
     else if (a[0] === "x") filters.x = a.length > 1 ? +a.slice(1) : null;
-    else { const j = +a.slice(1); filters.j = j || null; }
+    else if (a[0] === "o") filters.o = a.length > 1 ? +a.slice(1) : null;
+    else { const j = +a.slice(1); filters.j = j || null; filters.o = null; filters.x = null; }   // (a juggler count turns the clubs bar exact)
     redraw();
   });
 }
@@ -67,7 +71,7 @@ function wireFilters(redraw) {
 async function home() {
   await loadIndex();
   const q = $("#q").value.trim().toLowerCase();
-  const any = q || filters.moving || filters.j || (filters.x !== null && filters.x !== undefined);
+  const any = q || filters.moving || filters.j || filters.o || (filters.x !== null && filters.x !== undefined);
   let html = filterBar();
   if (any) {
     const hits = FLAT.filter(p => (!q || p.name.toLowerCase().includes(q) || (p.ss || "").toLowerCase().includes(q)) && passes(p));
