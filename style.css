@@ -242,3 +242,15 @@ sup.star { color: #c0392b; font-weight: 700; }
 .seg button.on { background: var(--accent); color: #fff; }
 .seg .seg-l { padding: 5px 4px 5px 11px; font-size: 12px; color: var(--mute); align-self: center; }
 .seg .seg-l + button { border-left: 0; }
+/* juggle-table cells (the Anthology's): manipulator moves, dots, marks, where each goes next */
+.pt-c.m { color: var(--ink); background: none; border: 1.5px solid var(--mute); font-weight: 600; }
+.pt-c sup, .pt-c sub { font-size: 9px; line-height: 0; }
+.pt-dots { font-size: 7px; letter-spacing: 1px; vertical-align: 6px; margin-right: 1px; }
+.pt-mark { font-weight: 700; }
+.pt-next { margin-left: 4px; font-size: 11px; color: var(--mute); white-space: nowrap; font-weight: 400; }
+.pt-next b { font-weight: 700; }
+.pt-next b.j-A { color: #d9534f; } .pt-next b.j-B { color: #2a7ab9; } .pt-next b.j-C { color: #3c9a3c; } .pt-next b.j-D { color: #c77c11; }
+.pt-who.j-M, .ps-name.j-M { --c: #7d5ba6; } .pt-c.to-M { --c: #7d5ba6; }
+.pt-colgrid { --col: 2.5em; }
+.pt-colgrid .pt-c { font-size: 11px; padding: 2px 0; }
+.pt-colgrid .pt-who { flex-basis: 3.6em; }

@@ -168,6 +168,13 @@ const origOf = p => `${(INDEX.meta && INDEX.meta.pdf_original) || "https://www.j
 const PATLINE = /^(Start for|Starting pattern for|Pattern for|After \w+ walks)/;
 let TABLE = (() => { try { return localStorage.getItem("hg-words") !== "1"; } catch (e) { return true; } })();
 function cellHtml(c) {
+  // (an empty column, as a juggle table keeps one: a blank of the same width)
+  if (!c || c.k === "gap") return `<span class="pt-c none"></span>`;
+  // (a manipulator's move, as the Anthology writes it: i intercept, c carry, m substitute -- from, to)
+  if (c.k === "m") {
+    const word = {i: "intercept", c: "carry", m: "substitute"}[c.op] || c.op;
+    return `<span class="pt-c m" title="${esc(word)}${c.from ? " from " + esc(c.from) : ""}${c.to ? " to " + esc(c.to) : ""}">${c.dots ? `<span class="pt-dots">${"•".repeat(c.dots)}</span>` : ""}${esc(c.op)}<sup>${esc(c.from || "")}</sup><sub>${esc(c.to || "")}</sub>${c.mark ? `<sup class="pt-mark">${esc(c.mark)}</sup>` : ""}</span>`;
+  }
   // (a beat with both hands throwing: its throws stacked, right over left)
   if (c.k === "b") {
     const R = c.items.find(i => i.hand === "R"), L = c.items.find(i => i.hand === "L"), rest = c.items.filter(i => !i.hand);
@@ -177,7 +184,8 @@ function cellHtml(c) {
   const sup = c.sp === 2 ? "²" : c.sp === 3 ? "³" : c.sp === 0 ? " zap" : "";
   const selfTip = c => c.x ? `${c.n}x: ${(c.word || "self").replace("-", " ")}, crossing to the other hand` : c.n >= 5 ? `${c.n}: ${(c.word || "self").replace("-", " ")}, ${c.n % 2 ? "crossing to the other hand" : "back to the same hand"}` : `${c.word && c.word !== c.w ? c.word.replace("-", " ") + " (" + c.w + ")" : c.w}`;
   const tip = c.k === "p" ? `${c.d ? "drop-back" : c.sp === 2 ? "double pass" : c.sp === 3 ? "triple pass" : "pass"} to ${c.w}${c.x ? ", crossing" : ""}${c.h ? ", hurried" : ""}` : `${c.h ? "hurried " : ""}${selfTip(c)}`;
-  const txt = c.k === "p" ? `${c.d ? "↩" : ""}${esc(c.w)}${sup}${c.x ? "✕" : ""}` : esc(c.w);
+  const txt = (c.dots ? `<span class="pt-dots" title="manipulated${c.dots > 1 ? ", already in the manipulator's hands" : ""}">${"•".repeat(c.dots)}</span>` : "") +
+    (c.k === "p" ? `${c.d ? "↩" : ""}${esc(c.w)}${sup}${c.x ? "✕" : ""}` : esc(c.w)) + (c.mark ? `<sup class="pt-mark">${esc(c.mark)}</sup>` : "");
   const hand = "";
   return `<span class="pt-c ${c.k === "p" ? "p" : "s"}${c.to ? " to-" + c.to : ""}${c.h ? " h" : ""}" title="${esc((c.hand ? (c.hand === "R" ? "right hand: " : "left hand: ") : "") + tip)}">${hand}${txt}</span>`;
 }
@@ -205,10 +213,13 @@ function syncRowHtml(r) {
     return it ? cellHtml(it) : `<span class="pt-c none"></span>`;
   };
   const line = h => `<span class="pt-cells">${r.cells.map(c => slot(c, h)).join("")}</span>`;
-  return `<div class="pt-row pt-sync" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}</span><span class="pt-lr2"><i>L</i><i>R</i></span><span class="pt-lines">${line("L")}${line("R")}</span></div>`;
+  return `<div class="pt-row pt-sync" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}${nextHtml(r)}</span><span class="pt-lr2"><i>L</i><i>R</i></span><span class="pt-lines">${line("L")}${line("R")}</span></div>`;
 }
+// (a moving pattern's row ends with where its juggler goes next round, as the Anthology's juggle tables show it)
+// (beside the row's name, so it stays in view however far the table scrolls)
+const nextHtml = r => r.next ? `<span class="pt-next" title="next round, this juggler takes ${esc(r.next)}'s place">→<b class="j-${esc(r.next)}">${esc(r.next)}</b></span>` : "";
 function tableHtml(t) {
-  const rowHtml = r => t.sync ? syncRowHtml(r) : `<div class="pt-row" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}</span><span class="pt-cells">${r.cells.map(cellHtml).join("")}</span></div>`;
+  const rowHtml = r => t.sync ? syncRowHtml(r) : `<div class="pt-row" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}${nextHtml(r)}</span><span class="pt-cells">${r.cells.map(cellHtml).join("")}</span></div>`;
   return startHtml(t.start) + (t.stages || []).map(st => {
     const head = st.title ? `<div class="pt-stage">${esc(st.title)}</div>` : "";
     const longest = Math.max(...st.rows.map(r => r.cells.length));
@@ -221,7 +232,7 @@ function tableHtml(t) {
       }
       return head + blocks.join("");
     }
-    return `${head}<div class="pt-grid">${st.rows.map(rowHtml).join("")}</div>`;
+    return `${head}<div class="pt-grid${t.columns ? " pt-colgrid" : ""}">${st.rows.map(rowHtml).join("")}</div>`;
   }).join("");
 }
 function wireTables() {
