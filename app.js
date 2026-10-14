@@ -53,7 +53,7 @@ function filterBar() {
   const xs = new Set(FLAT.map(extra).filter(x => x !== null));
   const os = filters.j ? [...new Set(FLAT.filter(p => p.j === filters.j && (!filters.moving || p.m)).map(p => p.o).filter(Boolean))].sort((a, b) => a - b) : [];
   const xb = filters.j ? `<div class="seg" role="radiogroup" aria-label="Clubs"><span class="seg-l">Clubs</span>${[["", "All"], ...os.map(o => [o, String(o)])].map(([v, l]) => `<button role="radio" aria-checked="${String(filters.o ?? "") === String(v)}" class="${String(filters.o ?? "") === String(v) ? "on" : ""}" data-act="o${v}">${l}</button>`).join("")}</div>`
-    : `<div class="seg" role="radiogroup" aria-label="Clubs vs 3 each"><span class="seg-l">Clubs</span>${[["", "All"], ...[-2, -1, 0, 1, 2, 3].filter(x => xs.has(x)).map(x => [x, x === -2 ? "≤−2" : x === 3 ? "+3+" : x > 0 ? "+" + x : x < 0 ? "−" + -x : "0"])].map(([v, l]) => `<button role="radio" aria-checked="${String(filters.x ?? "") === String(v)}" class="${String(filters.x ?? "") === String(v) ? "on" : ""}" data-act="x${v}">${l}</button>`).join("")}</div>`;
+    : `<div class="seg" role="radiogroup" aria-label="Clubs"><span class="seg-l">Clubs</span>${[["", "All"], ...[-2, -1, 0, 1, 2, 3].filter(x => xs.has(x)).map(x => [x, x === -2 ? "≤−2" : x === 3 ? "+3+" : x > 0 ? "+" + x : x < 0 ? "−" + -x : "0"])].map(([v, l]) => `<button role="radio" aria-checked="${String(filters.x ?? "") === String(v)}" class="${String(filters.x ?? "") === String(v) ? "on" : ""}" data-act="x${v}">${l}</button>`).join("")}</div>`;
   return `<div class="filters">${c(filters.moving, "Moving", "moving")}${js}${xb}</div>`;
 }
 function wireFilters(redraw) {
