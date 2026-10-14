@@ -40,10 +40,12 @@ function row(p) {
   const meta = [p.j ? `${p.j}p` : "", p.o ? `${p.o} clubs` : "", p.label ? `p${p.label}` : ""].filter(Boolean).join(" · ");
   return `<li><a href="#/p/${esc(p.id)}"><span class="nm">${esc(p.name)}</span>${p.m ? '<span class="badge mv">moving</span>' : p.a ? '<span class="badge">animated</span>' : ""}${p.k !== "pattern" ? `<span class="badge">${esc(p.k)}</span>` : ""}<span class="meta">${esc(meta)}</span></a></li>`;
 }
+// (only the juggler counts this book has: each up to 6, then 7+ if any)
+const jOpts = ps => { const js = new Set(ps.map(p => p.j).filter(Boolean)); return [2, 3, 4, 5, 6].filter(n => js.has(n)).map(n => [n, String(n)]).concat([...js].some(n => n >= 7) ? [[7, "7+"]] : []); };
 function filterBar() {
   const c = (on, lab, act) => `<button class="chip${on ? " on" : ""}" data-act="${act}">${lab}</button>`;
   // (one row for the juggler count, as the other books: pick one, 7+ takes the rest)
-  const js = `<div class="seg" role="radiogroup" aria-label="Jugglers"><span class="seg-l">Jugglers</span>${[["", "All"], ...[2, 3, 4, 5, 6, 7].map(n => [n, n === 7 ? "7+" : String(n)])].map(([v, l]) => `<button role="radio" aria-checked="${String(filters.j ?? "") === String(v)}" class="${String(filters.j ?? "") === String(v) ? "on" : ""}" data-act="j${v}">${l}</button>`).join("")}</div>`;
+  const js = `<div class="seg" role="radiogroup" aria-label="Jugglers"><span class="seg-l">Jugglers</span>${[["", "All"], ...jOpts(FLAT)].map(([v, l]) => `<button role="radio" aria-checked="${String(filters.j ?? "") === String(v)}" class="${String(filters.j ?? "") === String(v) ? "on" : ""}" data-act="j${v}">${l}</button>`).join("")}</div>`;
   return `<div class="filters">${c(filters.moving, "Moving", "moving")}${js}</div>`;
 }
 function wireFilters(redraw) {
