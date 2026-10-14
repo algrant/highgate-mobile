@@ -213,13 +213,13 @@ function syncRowHtml(r) {
     return it ? cellHtml(it) : `<span class="pt-c none"></span>`;
   };
   const line = h => `<span class="pt-cells">${r.cells.map(c => slot(c, h)).join("")}</span>`;
-  return `<div class="pt-row pt-sync" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}${nextHtml(r)}</span><span class="pt-lr2"><i>L</i><i>R</i></span><span class="pt-lines">${line("L")}${line("R")}</span></div>`;
+  return `<div class="pt-row pt-sync j-${esc(r.j)}" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}</span><span class="pt-lr2"><i>L</i><i>R</i></span><span class="pt-lines">${line("L")}${line("R")}</span>${nextHtml(r)}</div>`;
 }
 // (a moving pattern's row ends with where its juggler goes next round, as the Anthology's juggle tables show it)
-// (beside the row's name, so it stays in view however far the table scrolls)
+// (at the row's end, as the book has it; pinned to the table's right edge so it stays in view as it scrolls)
 const nextHtml = r => r.next ? `<span class="pt-next" title="next round, this juggler takes ${esc(r.next)}'s place">→<b class="j-${esc(r.next)}">${esc(r.next)}</b></span>` : "";
 function tableHtml(t) {
-  const rowHtml = r => t.sync ? syncRowHtml(r) : `<div class="pt-row" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}${nextHtml(r)}</span><span class="pt-cells">${r.cells.map(cellHtml).join("")}</span></div>`;
+  const rowHtml = r => t.sync ? syncRowHtml(r) : `<div class="pt-row j-${esc(r.j)}" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}</span><span class="pt-cells">${r.cells.map(cellHtml).join("")}</span>${nextHtml(r)}</div>`;
   return startHtml(t.start) + (t.stages || []).map(st => {
     const head = st.title ? `<div class="pt-stage">${esc(st.title)}</div>` : "";
     const longest = Math.max(...st.rows.map(r => r.cells.length));

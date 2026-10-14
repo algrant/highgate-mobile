@@ -254,3 +254,15 @@ sup.star { color: #c0392b; font-weight: 700; }
 .pt-colgrid { --col: 2.5em; }
 .pt-colgrid .pt-c { font-size: 11px; padding: 2px 0; }
 .pt-colgrid .pt-who { flex-basis: 3.6em; }
+/* each juggler's track: a band with the juggler's colour down its side, a line between tracks, the beats where
+   nothing happens shown as faint dots (the rhythm, and where someone waits); "→ next" pinned at the right */
+.pt-row.j-A { --c: #d9534f; } .pt-row.j-B { --c: #2a7ab9; } .pt-row.j-C { --c: #3c9a3c; } .pt-row.j-D { --c: #c77c11; }
+.pt-row.j-E { --c: #8a6d3b; } .pt-row.j-M { --c: #7d5ba6; }
+.pt-grid { gap: 0; }
+.pt-row { border-left: 3px solid var(--c, var(--line)); border-bottom: 1px solid var(--line); padding: 4px 0 4px 6px; background: color-mix(in srgb, var(--c, transparent) 6%, transparent); }
+.pt-row:first-child { border-top: 1px solid var(--line); }
+.pt-row.pt-sync { margin: 0; }
+.pt-c.none { visibility: visible; color: var(--mute); opacity: .45; background: none; }
+.pt-c.none::before { content: "·"; }
+.pt-next { position: sticky; right: 0; margin-left: auto; padding: 2px 6px 2px 6px; font-size: 12px; z-index: 1;
+  background: var(--card); box-shadow: -10px 0 8px -2px var(--card); }
