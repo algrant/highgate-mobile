@@ -33,8 +33,7 @@ async function loadPattern(id) {
 const jLabel = j => j ? `${j} jugglers` : "";
 function passes(p) {
   if (filters.moving && !p.m) return false;
-  if (filters.ss && !p.ss) return false;
-  if (filters.j === 4 ? !(p.j >= 4) : filters.j && p.j !== filters.j) return false;
+  if (filters.j === 7 ? !(p.j >= 7) : filters.j && p.j !== filters.j) return false;
   return true;
 }
 function row(p) {
@@ -43,7 +42,9 @@ function row(p) {
 }
 function filterBar() {
   const c = (on, lab, act) => `<button class="chip${on ? " on" : ""}" data-act="${act}">${lab}</button>`;
-  return `<div class="filters">${c(filters.moving, "Moving", "moving")}${c(filters.ss, "Siteswap", "ss")}${c(filters.j === 2, "2 jugglers", "j2")}${c(filters.j === 3, "3", "j3")}${c(filters.j === 4, "4+", "j4")}</div>`;
+  // (one row for the juggler count, as the other books: pick one, 7+ takes the rest)
+  const js = [2, 3, 4, 5, 6, 7].map(n => c(filters.j === n, n === 7 ? "7+" : n === 2 ? "2 jugglers" : String(n), "j" + n)).join("");
+  return `<div class="filters">${c(filters.moving, "Moving", "moving")}<span class="fsep"></span><span class="jrow">${js}</span></div>`;
 }
 function wireFilters(redraw) {
   document.querySelectorAll(".filters .chip").forEach(b => b.onclick = () => {
@@ -58,7 +59,7 @@ function wireFilters(redraw) {
 async function home() {
   await loadIndex();
   const q = $("#q").value.trim().toLowerCase();
-  const any = q || filters.moving || filters.ss || filters.j;
+  const any = q || filters.moving || filters.j;
   let html = filterBar();
   if (any) {
     const hits = FLAT.filter(p => (!q || p.name.toLowerCase().includes(q) || (p.ss || "").toLowerCase().includes(q)) && passes(p));

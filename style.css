@@ -230,3 +230,5 @@ sup.star { color: #c0392b; font-weight: 700; }
   .pat-main > article { order: 1; }
   .pat-model { order: 2; }
 }
+.filters .fsep { width: 1px; background: var(--line); margin: 2px 2px; }
+.filters .jrow { display: inline-flex; gap: 4px; flex-wrap: nowrap; } .filters .jrow .chip { padding: 5px 9px; }
