@@ -2,8 +2,10 @@
   --bg: #f6f7f9; --card: #fff; --ink: #1c1f23; --mute: #667085; --line: #e3e6ea; --accent: #1f5f8b; --chip: #eef3f8;
   --moving: #2e7d4f;
 }
+/* dark: the system's choice unless a theme is picked (data-theme on <html>, from the account menu) */
+:root[data-theme="dark"] { --bg: #111418; --card: #1b2026; --ink: #e8eaed; --mute: #9aa3ad; --line: #2c333b; --accent: #7fb6e0; --chip: #232a32; --moving: #6cc795; }
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #111418; --card: #1b2026; --ink: #e8eaed; --mute: #9aa3ad; --line: #2c333b; --accent: #7fb6e0; --chip: #232a32; --moving: #6cc795; }
+  :root:not([data-theme="light"]) { --bg: #111418; --card: #1b2026; --ink: #e8eaed; --mute: #9aa3ad; --line: #2c333b; --accent: #7fb6e0; --chip: #232a32; --moving: #6cc795; }
   /* the drawings are black on white, as printed: kept on a white card */
 }
 * { box-sizing: border-box; }
