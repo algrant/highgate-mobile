@@ -43,15 +43,15 @@ function row(p) {
 function filterBar() {
   const c = (on, lab, act) => `<button class="chip${on ? " on" : ""}" data-act="${act}">${lab}</button>`;
   // (one row for the juggler count, as the other books: pick one, 7+ takes the rest)
-  const js = [2, 3, 4, 5, 6, 7].map(n => c(filters.j === n, n === 7 ? "7+" : n === 2 ? "2 jugglers" : String(n), "j" + n)).join("");
-  return `<div class="filters">${c(filters.moving, "Moving", "moving")}<span class="fsep"></span><span class="jrow">${js}</span></div>`;
+  const js = `<div class="seg" role="radiogroup" aria-label="Jugglers"><span class="seg-l">Jugglers</span>${[["", "All"], ...[2, 3, 4, 5, 6, 7].map(n => [n, n === 7 ? "7+" : String(n)])].map(([v, l]) => `<button role="radio" aria-checked="${String(filters.j ?? "") === String(v)}" class="${String(filters.j ?? "") === String(v) ? "on" : ""}" data-act="j${v}">${l}</button>`).join("")}</div>`;
+  return `<div class="filters">${c(filters.moving, "Moving", "moving")}${js}</div>`;
 }
 function wireFilters(redraw) {
-  document.querySelectorAll(".filters .chip").forEach(b => b.onclick = () => {
+  document.querySelectorAll(".filters .chip, .filters .seg button").forEach(b => b.onclick = () => {
     const a = b.dataset.act;
     if (a === "moving") filters.moving = !filters.moving;
     else if (a === "ss") filters.ss = !filters.ss;
-    else { const j = +a.slice(1); filters.j = filters.j === j ? null : j; }
+    else { const j = +a.slice(1); filters.j = j || null; }
     redraw();
   });
 }
