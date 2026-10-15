@@ -205,9 +205,10 @@ function startHtml(st) {
 // a synchronous juggler: two lines, left hand over right, a beat's throws in their hand's line (blank where that
 // hand does not throw); "L / R" once beside the name
 function syncRowHtml(r) {
-  const known = r.cells.some(c => c.k === "b" || c.hand);
+  const known = r.cells.some(c => c && (c.k === "b" || c.hand));
   if (!known) return `<div class="pt-row" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}</span><span class="pt-cells">${r.cells.map(cellHtml).join("")}</span></div>`;
   const slot = (c, h) => {
+    if (!c || c.k === "gap") return `<span class="pt-c none"></span>`;   // (a blank column of a juggle table)
     const items = c.k === "b" ? c.items : [c];
     const it = items.find(i => i.hand === h);
     return it ? cellHtml(it) : `<span class="pt-c none"></span>`;
