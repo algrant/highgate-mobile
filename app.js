@@ -213,7 +213,8 @@ function syncRowHtml(r) {
     const it = items.find(i => i.hand === h);
     return it ? cellHtml(it) : `<span class="pt-c none"></span>`;
   };
-  const line = h => `<span class="pt-cells">${r.cells.map(c => slot(c, h)).join("")}</span>`;
+  // (a pair the book writes joined -- p_B+p_C: thrown together -- gets a "+" between its two lines)
+  const line = h => `<span class="pt-cells">${r.cells.map(c => c && c.k === "b" && c.plus && h === "L" ? slot(c, h).replace('class="pt-c ', 'class="pt-c jn ') : slot(c, h)).join("")}</span>`;
   return `<div class="pt-row pt-sync j-${esc(r.j)}" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}</span><span class="pt-lr2"><i>L</i><i>R</i></span><span class="pt-lines">${line("L")}${line("R")}</span>${nextHtml(r)}</div>`;
 }
 // (a moving pattern's row ends with where its juggler goes next round, as the Anthology's juggle tables show it)
