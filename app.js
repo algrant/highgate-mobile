@@ -220,7 +220,10 @@ function syncRowHtml(r) {
 // (at the row's end, as the book has it; pinned to the table's right edge so it stays in view as it scrolls)
 const nextHtml = r => r.next ? `<span class="pt-next" title="next round, this juggler takes ${esc(r.next)}'s place">→<b class="j-${esc(r.next)}">${esc(r.next)}</b></span>` : "";
 function tableHtml(t) {
-  const rowHtml = r => t.sync ? syncRowHtml(r) : `<div class="pt-row j-${esc(r.j)}" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}</span><span class="pt-cells">${r.cells.map(cellHtml).join("")}</span>${nextHtml(r)}</div>`;
+  // (hands on their own lines only in rows where both act at once; the other rows of a synchronous table keep a
+  // spacer where the L/R labels go, so the columns line up)
+  const both = r => r.cells.some(c => c && c.k === "b");
+  const rowHtml = r => t.sync && both(r) ? syncRowHtml(r) : t.sync ? `<div class="pt-row j-${esc(r.j)}" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}</span><span class="pt-lr2 pt-lr-blank"><i></i></span><span class="pt-cells">${r.cells.map(cellHtml).join("")}</span>${nextHtml(r)}</div>` : `<div class="pt-row j-${esc(r.j)}" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}</span><span class="pt-cells">${r.cells.map(cellHtml).join("")}</span>${nextHtml(r)}</div>`;
   return startHtml(t.start) + (t.stages || []).map(st => {
     const head = st.title ? `<div class="pt-stage">${esc(st.title)}</div>` : "";
     const longest = Math.max(...st.rows.map(r => r.cells.length));

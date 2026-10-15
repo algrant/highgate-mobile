@@ -266,3 +266,5 @@ sup.star { color: #c0392b; font-weight: 700; }
 .pt-c.none::before { content: "·"; }
 .pt-next { position: sticky; right: 0; margin-left: auto; padding: 2px 6px 2px 6px; font-size: 12px; z-index: 1;
   background: var(--card); box-shadow: -10px 0 8px -2px var(--card); }
+.pt-lr2.pt-lr-blank i { visibility: hidden; }
+.pt-lr2.pt-lr-blank i::before { content: "R"; }
