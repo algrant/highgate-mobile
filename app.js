@@ -218,7 +218,7 @@ function syncRowHtml(r) {
 }
 // (a moving pattern's row ends with where its juggler goes next round, as the Anthology's juggle tables show it)
 // (at the row's end, as the book has it; pinned to the table's right edge so it stays in view as it scrolls)
-const nextHtml = r => r.next ? `<span class="pt-next" title="next round, this juggler takes ${esc(r.next)}'s place">→<b class="j-${esc(r.next)}">${esc(r.next)}</b></span>` : "";
+const nextHtml = r => r.next ? `<span class="pt-next" title="next round, this juggler becomes ${esc(r.next)}">→<b class="j-${esc(r.next)}">${esc(r.next)}</b></span>` : "";
 function tableHtml(t) {
   // (hands on their own lines only in rows where both act at once; the other rows of a synchronous table keep a
   // spacer where the L/R labels go, so the columns line up)
