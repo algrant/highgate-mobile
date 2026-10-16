@@ -276,3 +276,7 @@ sup.star { color: #c0392b; font-weight: 700; }
 .pt-st .ps-lr { font-size: 9px; }
 .pt-st .ps-h.first { box-shadow: inset 0 0 0 1.5px var(--ink); }
 .pt-st .ps-late { align-self: center; font-size: 10px; color: var(--mute); margin-left: 1px; }
+.pt-st .club { width: .8em; height: .8em; margin: 0 .5px; border: 0; vertical-align: -.05em; }
+/* the book's club colours, lighter */
+.club.c-red { background: #f4a09a; } .club.c-green { background: #8fd4a4; } .club.c-blue { background: #9cc2f5; }
+.club.c-yellow { background: #f7dc7a; } .club.c-white { background: #fff; border: 1px solid #bbb; }
