@@ -183,9 +183,9 @@ function cellHtml(c) {
   }
   const sup = c.sp === 2 ? "²" : c.sp === 3 ? "³" : c.sp === 0 ? "!" : "";
   const selfTip = c => c.x ? `${c.n}x: ${(c.word || "self").replace("-", " ")}, crossing to the other hand` : c.n >= 5 ? `${c.n}: ${(c.word || "self").replace("-", " ")}, ${c.n % 2 ? "crossing to the other hand" : "back to the same hand"}` : `${c.word && c.word !== c.w ? c.word.replace("-", " ") + " (" + c.w + ")" : c.w}`;
-  const tip = c.k === "p" ? `${c.d ? "drop-back" : c.sp === 2 ? "double pass" : c.sp === 3 ? "triple pass" : "pass"} to ${c.w}${c.x ? ", crossing" : ""}${c.h ? ", hurried" : ""}` : `${c.h ? "hurried " : ""}${selfTip(c)}`;
+  const tip = c.k === "p" ? `${c.d ? "drop-back" : c.sp === 2 ? "double pass" : c.sp === 3 ? "triple pass" : "pass"} to ${c.w}${c.x ? ", crossing" : ""}${c.z ? ", with a zip on the same beat (a hand-across pass)" : ""}${c.h ? ", hurried" : ""}` : `${c.h ? "hurried " : ""}${selfTip(c)}`;
   const txt = (c.dots ? `<span class="pt-dots" title="manipulated${c.dots > 1 ? ", already in the manipulator's hands" : ""}">${"•".repeat(c.dots)}</span>` : "") +
-    (c.k === "p" ? `${c.d ? "↩" : ""}${esc(c.w)}${sup}${c.x ? "✕" : ""}` : esc(c.w)) + (c.mark ? `<sup class="pt-mark">${esc(c.mark)}</sup>` : "");
+    (c.k === "p" ? `${c.d ? "↩" : ""}${c.z ? '<span class="pz" title="pass zip: the other hand zips across on the same beat">⇄</span>' : ""}${esc(c.w)}${sup}${c.x ? "✕" : ""}` : esc(c.w)) + (c.mark ? `<sup class="pt-mark">${esc(c.mark)}</sup>` : "");
   const hand = "";
   return `<span class="pt-c ${c.k === "p" ? "p" : "s"}${c.to ? " to-" + c.to : ""}${c.h ? " h" : ""}" title="${esc((c.hand ? (c.hand === "R" ? "right hand: " : "left hand: ") : "") + tip)}">${hand}${txt}</span>`;
 }
