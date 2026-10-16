@@ -268,3 +268,11 @@ sup.star { color: #c0392b; font-weight: 700; }
   background: var(--card); box-shadow: -10px 0 8px -2px var(--card); }
 .pt-lr2.pt-lr-blank i { visibility: hidden; }
 .pt-lr2.pt-lr-blank i::before { content: "R"; }
+
+/* starting clubs at the head of each juggler's row; the hand that throws first outlined */
+.pt-st { display: inline-flex; gap: 3px; margin-right: 8px; flex: 0 0 auto; }
+.pt-st .ps-h { min-width: 1.9em; padding: 1px 3px; }
+.pt-st .ps-dots { font-size: 11px; }
+.pt-st .ps-lr { font-size: 9px; }
+.pt-st .ps-h.first { box-shadow: inset 0 0 0 1.5px var(--ink); }
+.pt-st .ps-late { align-self: center; font-size: 10px; color: var(--mute); margin-left: 1px; }
