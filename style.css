@@ -280,3 +280,8 @@ sup.star { color: #c0392b; font-weight: 700; }
 /* the book's club colours, lighter */
 .club.c-red { background: #f4a09a; } .club.c-green { background: #8fd4a4; } .club.c-blue { background: #9cc2f5; }
 .club.c-yellow { background: #f7dc7a; } .club.c-white { background: #fff; border: 1px solid #bbb; }
+/* the start chit beside each row, outside the row's coloured band */
+.pt-rowwrap { display: flex; align-items: center; }
+.pt-rowwrap .pt-row { flex: 1 1 auto; min-width: 0; }
+.pt-rowwrap:first-child .pt-row { border-top: 1px solid var(--line); }
+.pt-rowwrap .pt-st { margin-right: 6px; }

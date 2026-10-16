@@ -225,7 +225,7 @@ function tableHtml(t) {
   const both = r => r.cells.some(c => c && c.k === "b");
   let rowHtml = r => t.sync && both(r) ? syncRowHtml(r) : t.sync ? `<div class="pt-row j-${esc(r.j)}" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}</span><span class="pt-lr2 pt-lr-blank"><i></i></span><span class="pt-cells">${r.cells.map(cellHtml).join("")}</span>${nextHtml(r)}</div>` : `<div class="pt-row j-${esc(r.j)}" style="--off:${r.off}"><span class="pt-who j-${esc(r.j)}">${esc(r.who)}</span><span class="pt-cells">${r.cells.map(cellHtml).join("")}</span>${nextHtml(r)}</div>`;
   // (each juggler's starting clubs as a chit at the head of their own row -- in the book's colours where it has
-  // them, the inside club nearest the middle -- with when they start if not on the first beat)
+  // them, the inside club nearest the middle)
   const inRow = t.start && t.start.length;
   if (inRow) {
     const st = Object.fromEntries(t.start.map(x => [x.j, x])), dots = n => n == null ? "?" : n ? "●".repeat(n) : "–";
@@ -238,10 +238,10 @@ function tableHtml(t) {
       const x = st[r.j], f = first(r);
       if (!x) return `<span class="pt-st"></span>`;
       const h = side => `<span class="ps-h${f.includes(side) ? " first" : ""}"${f.includes(side) ? ' title="throws first"' : ""}><span class="ps-dots">${x.colours && x.colours[side] ? (x.colours[side].length ? (side === "L" ? x.colours[side].slice().reverse() : x.colours[side]).map(c => `<span class="club c-${esc(c)}" title="${esc(c)} club"></span>`).join("") : "–") : dots(x[side])}${x["air" + side] ? `<span class="ps-air" title="${x["air" + side]} on its way in">${"○".repeat(x["air" + side])}</span>` : ""}</span><span class="ps-lr">${side}</span></span>`;
-      return `<span class="pt-st" title="clubs at the start: ${x.L ?? "?"} in the left hand, ${x.R ?? "?"} in the right${x.airL || x.airR ? ` (○ still in the air, on its way to that hand)` : ""}${f.length ? `; ${f.join(" and ")} throws first` : ""}${x.offset ? `; starts ${x.offset === 0.5 ? "½" : x.offset} beat${x.offset > 1 ? "s" : ""} after ${x.after || ""}` : ""}">${h("L")}${h("R")}${x.offset ? `<span class="ps-late">+${x.offset === 0.5 ? "½" : x.offset}</span>` : ""}</span>`;
+      return `<span class="pt-st" title="clubs at the start: ${x.L ?? "?"} in the left hand, ${x.R ?? "?"} in the right${x.airL || x.airR ? ` (○ still in the air, on its way to that hand)` : ""}${f.length ? `; ${f.join(" and ")} throws first` : ""}${x.offset ? `; starts ${x.offset === 0.5 ? "½" : x.offset} beat${x.offset > 1 ? "s" : ""} after ${x.after || ""}` : ""}">${h("L")}${h("R")}</span>`;
     };
     const inner = rowHtml;
-    rowHtml = r => inner(r).replace(/<span class="pt-who /, m => chit(r) + m);
+    rowHtml = r => `<div class="pt-rowwrap">${chit(r)}${inner(r)}</div>`;   // (the chit beside the row, outside its band)
   }
   return (inRow ? "" : startHtml(t.start)) + (t.stages || []).map(st => {
     const head = st.title ? `<div class="pt-stage">${esc(st.title)}</div>` : "";
