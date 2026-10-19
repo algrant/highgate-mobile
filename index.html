@@ -1,36 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-<script>try { const t = localStorage.getItem("fb-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1f5f8b">
-<title>Highgate Passing Patterns</title>
-<meta name="description" content="The New Highgate Collection of club passing patterns, to browse on a phone: causal diagrams, position frames and animated walking patterns.">
-<link rel="stylesheet" href="style.css?v=9d217f32e1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The New Highgate Collection · moved to funky-books</title>
+<link rel="canonical" href="https://funkybook.algrant.ca/books/highgate/">
+<script>location.replace("https://funkybook.algrant.ca/books/highgate/" + location.hash);</script>
 </head>
-<body>
-<header id="top">
-  <a href="../../" class="brand home" title="funky-book: all the books" hidden>funky-book</a><a href="#/" class="brand">Highgate</a>
-  <input id="q" type="search" placeholder="Search patterns…" autocomplete="off" aria-label="Search patterns">
-  <a href="#/about" class="about" aria-label="About">?</a>
-</header>
-<div id="shell"><aside id="nav" aria-label="Chapters"></aside><main id="main"><p class="loading">Loading…</p></main></div>
-<script src="lib/events.js?v=9d217f32e1"></script>
-<script src="lib/moving.js?v=9d217f32e1"></script>
-<script>
-// inside funky-book: the link home, and its accounts (stars, notes, practice log)
-if (/\/books\/[^/]+\/([^/]*\.html)?$/.test(location.pathname)) {
-  document.querySelector(".brand.home").hidden = false;
-  const v = "?v=" + Math.floor(Date.now() / 36e5);   // (the account files change apart from the book: fresh within the hour)
-  for (const src of ["https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2", "../../account/config.js" + v, "../../account/account.js" + v, "../../account/reviews.js" + v]) {
-    const sc = document.createElement("script"); sc.src = src; sc.async = false; document.head.appendChild(sc);
-  }
-  const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "../../account/account.css" + v; document.head.appendChild(css);
-}
-</script>
-<script src="notes.js?v=9d217f32e1"></script>
-<script src="lib/table-link.js"></script>
-<script src="app.js?v=9d217f32e1"></script>
+<body style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;padding:24px">
+<p>The New Highgate Collection has moved to <a href="https://funkybook.algrant.ca/books/highgate/">funky-books</a>, with the other passing books.</p>
 </body>
 </html>
